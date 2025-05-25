@@ -1,0 +1,202 @@
+"use client"
+
+import React from "react"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu"
+import { cn } from "@/lib/utils"
+import { Menu, X, LayoutDashboard } from "lucide-react"
+import { useState } from "react"
+import Image from "next/image"
+import { useLanguage } from "@/contexts/language-context"
+import { LanguageSwitcher } from "@/components/language-switcher"
+
+export function Header() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { t } = useLanguage()
+
+  return (
+    <header className="border-b bg-white">
+      <div className="container mx-auto max-w-6xl px-4 py-4">
+        <div className="flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="relative w-10 h-10">
+              <Image
+                src="/placeholder.svg?height=40&width=40"
+                alt="Swiss AI Registry Logo"
+                width={40}
+                height={40}
+                className="object-contain"
+              />
+            </div>
+            <span className="font-bold text-xl">Swiss AI Registry</span>
+          </Link>
+
+          <div className="hidden md:flex items-center gap-6">
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>{t("discover_agents")}</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid gap-3 p-6 md:w-[400px]">
+                      <ListItem href="/agents" title={t("all_agents")}>
+                        {t("browse_all_agents")}
+                      </ListItem>
+                      <ListItem href="/self-hosted" title={t("self_hosted_agents")}>
+                        {t("browse_self_hosted_agents")}
+                      </ListItem>
+                      <ListItem href="/concierge" title={t("concierge_compatible")}>
+                        {t("browse_concierge_compatible_agents")}
+                      </ListItem>
+                      <ListItem href="/categories" title={t("categories")}>
+                        {t("browse_by_category")}
+                      </ListItem>
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>{t("for_businesses")}</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-2">
+                      <li className="row-span-3">
+                        <NavigationMenuLink asChild>
+                          <a
+                            className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-primary/80 to-primary p-6 no-underline outline-none focus:shadow-md"
+                            href="/"
+                          >
+                            <div className="mt-4 mb-2 text-lg font-medium text-white">{t("why_ai_agents")}</div>
+                            <p className="text-sm leading-tight text-white/90">{t("learn_how_ai_agents_help")}</p>
+                          </a>
+                        </NavigationMenuLink>
+                      </li>
+                      <ListItem href="/use-cases" title={t("use_cases")}>
+                        {t("discover_use_cases")}
+                      </ListItem>
+                      <ListItem href="/implementation" title={t("implementation")}>
+                        {t("learn_how_to_implement")}
+                      </ListItem>
+                      <ListItem href="/success-stories" title={t("success_stories")}>
+                        {t("read_success_stories")}
+                      </ListItem>
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>{t("about_us")}</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid gap-3 p-6 md:w-[400px]">
+                      <ListItem href="/about" title={t("about_swiss_ai_registry")}>
+                        {t("learn_about_mission")}
+                      </ListItem>
+                      <ListItem href="/verification" title={t("verification_process")}>
+                        {t("how_we_ensure_quality")}
+                      </ListItem>
+                      <ListItem href="/contact" title={t("contact")}>
+                        {t("get_in_touch")}
+                      </ListItem>
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <Link href="/dashboard" legacyBehavior passHref>
+                    <NavigationMenuLink
+                      className={cn(
+                        "group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50",
+                      )}
+                    >
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      {t("dashboard")}
+                    </NavigationMenuLink>
+                  </Link>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+
+            <div className="flex items-center gap-3">
+              <LanguageSwitcher />
+              <Button variant="outline">{t("sign_in")}</Button>
+              <Link href="/register-agent">
+                <Button>{t("register_agent")}</Button>
+              </Link>
+            </div>
+          </div>
+
+          <div className="md:hidden flex items-center gap-2">
+            <LanguageSwitcher />
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden py-4 px-4 border-t">
+          <nav className="flex flex-col space-y-4">
+            <Link href="/agents" className="py-2 px-3 hover:bg-gray-100 rounded-md">
+              {t("all_agents")}
+            </Link>
+            <Link href="/self-hosted" className="py-2 px-3 hover:bg-gray-100 rounded-md">
+              {t("self_hosted_agents")}
+            </Link>
+            <Link href="/concierge" className="py-2 px-3 hover:bg-gray-100 rounded-md">
+              {t("concierge_compatible")}
+            </Link>
+            <Link href="/for-businesses" className="py-2 px-3 hover:bg-gray-100 rounded-md">
+              {t("for_businesses")}
+            </Link>
+            <Link href="/about" className="py-2 px-3 hover:bg-gray-100 rounded-md">
+              {t("about_us")}
+            </Link>
+            <Link href="/dashboard" className="py-2 px-3 hover:bg-gray-100 rounded-md flex items-center">
+              <LayoutDashboard className="mr-2 h-4 w-4" />
+              {t("dashboard")}
+            </Link>
+            <div className="pt-4 flex flex-col gap-3">
+              <Button variant="outline" className="w-full">
+                {t("sign_in")}
+              </Button>
+              <Link href="/register-agent" className="w-full">
+                <Button className="w-full">{t("register_agent")}</Button>
+              </Link>
+            </div>
+          </nav>
+        </div>
+      )}
+    </header>
+  )
+}
+
+const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWithoutRef<"a">>(
+  ({ className, title, children, ...props }, ref) => {
+    return (
+      <li>
+        <NavigationMenuLink asChild>
+          <a
+            ref={ref}
+            className={cn(
+              "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-gray-100 focus:bg-gray-100",
+              className,
+            )}
+            {...props}
+          >
+            <div className="text-sm font-medium leading-none">{title}</div>
+            <p className="line-clamp-2 text-sm leading-snug text-gray-500">{children}</p>
+          </a>
+        </NavigationMenuLink>
+      </li>
+    )
+  },
+)
+ListItem.displayName = "ListItem"
