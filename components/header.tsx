@@ -108,6 +108,26 @@ export function Header() {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
+                  <NavigationMenuTrigger>For Individuals</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid gap-3 p-6 md:w-[400px]">
+                      <ListItem href="/individuals" title="Personal AI Assistants">
+                        AI solutions for your daily life in Switzerland
+                      </ListItem>
+                      <ListItem href="/individuals#household" title="Smart Home">
+                        Household management and automation
+                      </ListItem>
+                      <ListItem href="/individuals#learning" title="Learning & Skills">
+                        Language learning and skill development
+                      </ListItem>
+                      <ListItem href="/individuals#health" title="Health & Wellness">
+                        Personal health and wellness coaching
+                      </ListItem>
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
                   <Link href="/dashboard" legacyBehavior passHref>
                     <NavigationMenuLink
                       className={cn(
@@ -158,6 +178,9 @@ export function Header() {
             </Link>
             <Link href="/about" className="py-2 px-3 hover:bg-gray-100 rounded-md">
               {t("about_us")}
+            </Link>
+            <Link href="/individuals" className="py-2 px-3 hover:bg-gray-100 rounded-md">
+              For Individuals
             </Link>
             <Link href="/dashboard" className="py-2 px-3 hover:bg-gray-100 rounded-md flex items-center">
               <LayoutDashboard className="mr-2 h-4 w-4" />
