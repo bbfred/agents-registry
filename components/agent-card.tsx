@@ -18,9 +18,8 @@ export function AgentCard({ agent }: AgentCardProps) {
   const { t } = useLanguage()
 
   return (
-    <div className="border rounded-lg overflow-hidden bg-white hover:shadow-md transition-shadow">
-
-      <div className="p-4">
+    <div className="border rounded-lg overflow-hidden bg-white hover:shadow-md transition-shadow h-full flex flex-col">
+      <div className="p-4 flex flex-col h-full">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-2">
             <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-100">
@@ -37,30 +36,39 @@ export function AgentCard({ agent }: AgentCardProps) {
           </div>
         </div>
 
-        <p className="mt-2 text-sm text-gray-600 line-clamp-2">{t(agent.shortDescription)}</p>
+        <div className="mt-2 flex-1 flex flex-col">
+          <p className="text-sm text-gray-600 line-clamp-2 min-h-[2.5rem]">{t(agent.shortDescription)}</p>
+          
+          <div className="mt-auto pt-2">
+            <div className="flex flex-wrap gap-1 min-h-[1.5rem]">
+              {agent.categories.slice(0, 3).map((category) => (
+                <Badge key={category} variant="secondary" className="text-xs">
+                  {t(category)}
+                </Badge>
+              ))}
+              {agent.categories.length > 3 && (
+                <Badge variant="secondary" className="text-xs">
+                  +{agent.categories.length - 3}
+                </Badge>
+              )}
+            </div>
 
-        <div className="mt-3 flex flex-wrap gap-1">
-          {agent.categories.map((category) => (
-            <Badge key={category} variant="secondary" className="text-xs">
-              {t(category)}
-            </Badge>
-          ))}
-        </div>
-
-        <FeatureGate phase="full">
-          <div className="mt-3 flex flex-wrap gap-1">
-            {agent.selfHosted && (
-              <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
-                {t("self_hosted_badge")}
-              </Badge>
-            )}
-            {agent.conciergeCompatible && (
-              <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
-                {t("concierge_compatible_badge")}
-              </Badge>
-            )}
+            <FeatureGate phase="full">
+              <div className="mt-2 flex flex-wrap gap-1">
+                {agent.selfHosted && (
+                  <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
+                    {t("self_hosted_badge")}
+                  </Badge>
+                )}
+                {agent.conciergeCompatible && (
+                  <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                    {t("concierge_compatible_badge")}
+                  </Badge>
+                )}
+              </div>
+            </FeatureGate>
           </div>
-        </FeatureGate>
+        </div>
 
         <div className="mt-4 flex justify-end">
           <Link href={`/agents/${agent.id}`}>
