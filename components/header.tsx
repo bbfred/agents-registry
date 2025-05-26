@@ -12,9 +12,8 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu"
 import { cn } from "@/lib/utils"
-import { Menu, X, LayoutDashboard } from "lucide-react"
+import { Menu, X, LayoutDashboard, Bot } from "lucide-react"
 import { useState } from "react"
-import Image from "next/image"
 import { useLanguage } from "@/contexts/language-context"
 import { LanguageSwitcher } from "@/components/language-switcher"
 
@@ -27,14 +26,8 @@ export function Header() {
       <div className="container mx-auto max-w-6xl px-4 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="relative w-10 h-10">
-              <Image
-                src="/placeholder.svg?height=40&width=40"
-                alt="Swiss AI Registry Logo"
-                width={40}
-                height={40}
-                className="object-contain"
-              />
+            <div className="size-10 rounded-lg bg-primary flex items-center justify-center">
+              <Bot className="size-6 text-primary-foreground" />
             </div>
             <span className="font-bold text-xl">Swiss AI Registry</span>
           </Link>
@@ -128,15 +121,12 @@ export function Header() {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <Link href="/dashboard" legacyBehavior passHref>
-                    <NavigationMenuLink
-                      className={cn(
-                        "group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50",
-                      )}
-                    >
-                      <LayoutDashboard className="mr-2 h-4 w-4" />
-                      {t("dashboard")}
-                    </NavigationMenuLink>
+                  <Link 
+                    href="/dashboard" 
+                    className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-ring/50 outline-none transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1"
+                  >
+                    <LayoutDashboard className="mr-2 size-4" />
+                    {t("dashboard")}
                   </Link>
                 </NavigationMenuItem>
               </NavigationMenuList>
@@ -154,7 +144,7 @@ export function Header() {
           <div className="md:hidden flex items-center gap-2">
             <LanguageSwitcher />
             <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {mobileMenuOpen ? <X className="size-6" /> : <Menu className="size-6" />}
             </button>
           </div>
         </div>
@@ -201,7 +191,7 @@ export function Header() {
   )
 }
 
-const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWithoutRef<"a">>(
+const ListItem = React.forwardRef<React.ComponentRef<"a">, React.ComponentPropsWithoutRef<"a">>(
   ({ className, title, children, ...props }, ref) => {
     return (
       <li>

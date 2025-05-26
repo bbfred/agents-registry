@@ -5,11 +5,12 @@ import { Button } from "@/components/ui/button"
 import { ChevronRight, Shield, Globe, Sparkles } from "lucide-react"
 import { featuredAgents } from "@/data/agents"
 import Link from "next/link"
-import { ClientPage } from "@/components/client-page"
+import { PageWrapper } from "@/components/page-wrapper"
 
 export default function Home() {
+  
   return (
-    <ClientPage>
+    <PageWrapper>
       {({ t }) => (
         <main className="flex min-h-screen flex-col">
           {/* Hero Section */}
@@ -109,6 +110,6 @@ export default function Home() {
           </section>
         </main>
       )}
-    </ClientPage>
+    </PageWrapper>
   )
 }
