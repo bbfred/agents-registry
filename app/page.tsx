@@ -6,6 +6,7 @@ import { ChevronRight, Shield, Globe, Sparkles } from "lucide-react"
 import { featuredAgents } from "@/data/agents"
 import Link from "next/link"
 import { PageWrapper } from "@/components/page-wrapper"
+import { FeatureGate } from "@/components/feature-gate"
 
 export default function Home() {
   
@@ -102,9 +103,11 @@ export default function Home() {
                   <h2 className="text-2xl md:text-3xl font-bold mb-4">{t("are_you_provider")}</h2>
                   <p className="text-white/90 max-w-xl">{t("register_cta")}</p>
                 </div>
-                <Button className="bg-white text-primary hover:bg-gray-100 hover:text-primary/80 whitespace-nowrap">
-                  {t("register_agent")}
-                </Button>
+                <Link href="/register-agent">
+                  <Button className="bg-white text-primary hover:bg-gray-100 hover:text-primary/80 whitespace-nowrap">
+                    {t("register_agent")}
+                  </Button>
+                </Link>
               </div>
             </div>
           </section>

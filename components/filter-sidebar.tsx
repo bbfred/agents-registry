@@ -1,15 +1,13 @@
 "use client"
 
-import { useState } from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
-import { Slider } from "@/components/ui/slider"
 import { Button } from "@/components/ui/button"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { useLanguage } from "@/contexts/language-context"
+import { FeatureGate } from "@/components/feature-gate"
 
 export function FilterSidebar() {
-  const [priceRange, setPriceRange] = useState([0, 1000])
   const { t } = useLanguage()
 
   return (
@@ -21,7 +19,7 @@ export function FilterSidebar() {
         </Button>
       </div>
 
-      <Accordion type="multiple" defaultValue={["categories", "languages", "verification", "features"]}>
+      <Accordion type="multiple" defaultValue={["categories", "languages", "verification"]}>
         <AccordionItem value="categories">
           <AccordionTrigger>{t("categories")}</AccordionTrigger>
           <AccordionContent>
@@ -102,84 +100,73 @@ export function FilterSidebar() {
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="features">
-          <AccordionTrigger>Features</AccordionTrigger>
-          <AccordionContent>
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <Checkbox id="self-hosted" />
-                <Label htmlFor="self-hosted">{t("filter_self_hosted")}</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="concierge-compatible" />
-                <Label htmlFor="concierge-compatible">{t("filter_concierge")}</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="demo-available" />
-                <Label htmlFor="demo-available">{t("filter_demo")}</Label>
-              </div>
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-
-        <AccordionItem value="price">
-          <AccordionTrigger>Preis</AccordionTrigger>
-          <AccordionContent>
-            <div className="space-y-4">
-              <Slider defaultValue={[0, 1000]} max={1000} step={10} value={priceRange} onValueChange={setPriceRange} />
-              <div className="flex items-center justify-between">
-                <span>CHF {priceRange[0]}</span>
-                <span>CHF {priceRange[1]}</span>
-              </div>
+        <FeatureGate phase="full">
+          <AccordionItem value="features">
+            <AccordionTrigger>Features</AccordionTrigger>
+            <AccordionContent>
               <div className="space-y-2">
                 <div className="flex items-center space-x-2">
-                  <Checkbox id="free" />
-                  <Label htmlFor="free">{t("free")}</Label>
+                  <Checkbox id="self-hosted" />
+                  <Label htmlFor="self-hosted">{t("filter_self_hosted")}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox id="freemium" />
-                  <Label htmlFor="freemium">{t("freemium")}</Label>
+                  <Checkbox id="concierge-compatible" />
+                  <Label htmlFor="concierge-compatible">{t("filter_concierge")}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Checkbox id="subscription" />
-                  <Label htmlFor="subscription">{t("subscription")}</Label>
+                  <Checkbox id="demo-available" />
+                  <Label htmlFor="demo-available">{t("filter_demo")}</Label>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="one-time" />
-                  <Label htmlFor="one-time">{t("one_time_payment")}</Label>
-                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </FeatureGate>
+
+        <AccordionItem value="pricing">
+          <AccordionTrigger>{t("pricing_model")}</AccordionTrigger>
+          <AccordionContent>
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <Checkbox id="free" />
+                <Label htmlFor="free">{t("free")}</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox id="paid" />
+                <Label htmlFor="paid">{t("paid")}</Label>
               </div>
             </div>
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="integrations">
-          <AccordionTrigger>Integrationen</AccordionTrigger>
-          <AccordionContent>
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <Checkbox id="slack" />
-                <Label htmlFor="slack">Slack</Label>
+        <FeatureGate phase="full">
+          <AccordionItem value="integrations">
+            <AccordionTrigger>Integrationen</AccordionTrigger>
+            <AccordionContent>
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="slack" />
+                  <Label htmlFor="slack">Slack</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="teams" />
+                  <Label htmlFor="teams">Microsoft Teams</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="salesforce" />
+                  <Label htmlFor="salesforce">Salesforce</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="sap" />
+                  <Label htmlFor="sap">SAP</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="abacus" />
+                  <Label htmlFor="abacus">Abacus</Label>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="teams" />
-                <Label htmlFor="teams">Microsoft Teams</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="salesforce" />
-                <Label htmlFor="salesforce">Salesforce</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="sap" />
-                <Label htmlFor="sap">SAP</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="abacus" />
-                <Label htmlFor="abacus">Abacus</Label>
-              </div>
-            </div>
-          </AccordionContent>
-        </AccordionItem>
+            </AccordionContent>
+          </AccordionItem>
+        </FeatureGate>
       </Accordion>
 
       <Button className="w-full">{t("apply_filters")}</Button>

@@ -14,6 +14,8 @@ import { Button } from "@/components/ui/button"
 import { AgentChatInterface } from "@/components/agent-chat-interface"
 import { useState } from "react"
 import Link from "next/link"
+import { FeatureGate } from "@/components/feature-gate"
+import { isFeatureEnabled } from "@/lib/features"
 
 interface AgentPageProps {
   params: {
@@ -55,44 +57,50 @@ export default function AgentPage({ params }: AgentPageProps) {
                 ))}
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                {agent.selfHosted && (
-                  <Badge variant="secondary" className="flex items-center gap-1">
-                    <Server className="h-3.5 w-3.5 mr-1" />
-                    {t("self_hosted")}
-                  </Badge>
-                )}
-                {agent.conciergeCompatible && (
-                  <Badge variant="secondary" className="flex items-center gap-1">
-                    <Home className="h-3.5 w-3.5 mr-1" />
-                    {t("concierge_compatible")}
-                  </Badge>
-                )}
-              </div>
+              <FeatureGate phase="full">
+                <div className="flex flex-wrap gap-2">
+                  {agent.selfHosted && (
+                    <Badge variant="secondary" className="flex items-center gap-1">
+                      <Server className="h-3.5 w-3.5 mr-1" />
+                      {t("self_hosted")}
+                    </Badge>
+                  )}
+                  {agent.conciergeCompatible && (
+                    <Badge variant="secondary" className="flex items-center gap-1">
+                      <Home className="h-3.5 w-3.5 mr-1" />
+                      {t("concierge_compatible")}
+                    </Badge>
+                  )}
+                </div>
+              </FeatureGate>
             </div>
           </div>
 
-          {agent.selfHosted && agent.demoAvailable && !showDemo && (
-            <div className="mb-6">
-              <Button onClick={() => setShowDemo(true)}>{t("try_now")}</Button>
-            </div>
-          )}
+          <FeatureGate feature="interactiveDemo">
+            {agent.selfHosted && agent.demoAvailable && !showDemo && (
+              <div className="mb-6">
+                <Button onClick={() => setShowDemo(true)}>{t("try_now")}</Button>
+              </div>
+            )}
 
-          {agent.selfHosted && agent.demoAvailable && showDemo && (
-            <div className="mb-6">
-              <AgentChatInterface agent={agent} />
-            </div>
-          )}
+            {agent.selfHosted && agent.demoAvailable && showDemo && (
+              <div className="mb-6">
+                <AgentChatInterface agent={agent} />
+              </div>
+            )}
+          </FeatureGate>
 
           <Tabs defaultValue="overview">
             <TabsList className="mb-6">
               <TabsTrigger value="overview">{t("overview")}</TabsTrigger>
               <TabsTrigger value="capabilities">{t("capabilities")}</TabsTrigger>
-              <TabsTrigger value="compatibility">{t("compatibility")}</TabsTrigger>
-              {agent.selfHosted && <TabsTrigger value="self-hosted">{t("self_hosted")}</TabsTrigger>}
-              {!agent.selfHosted && <TabsTrigger value="integration">{t("integration_guide")}</TabsTrigger>}
-              {agent.conciergeCompatible && <TabsTrigger value="concierge">{t("concierge_app")}</TabsTrigger>}
               <TabsTrigger value="reviews">{t("reviews")}</TabsTrigger>
+              <FeatureGate phase="full">
+                <TabsTrigger value="compatibility">{t("compatibility")}</TabsTrigger>
+                {agent.selfHosted && <TabsTrigger value="self-hosted">{t("self_hosted")}</TabsTrigger>}
+                {!agent.selfHosted && <TabsTrigger value="integration">{t("integration_guide")}</TabsTrigger>}
+                {agent.conciergeCompatible && <TabsTrigger value="concierge">{t("concierge_app")}</TabsTrigger>}
+              </FeatureGate>
             </TabsList>
 
             <TabsContent value="overview">
@@ -102,8 +110,10 @@ export default function AgentPage({ params }: AgentPageProps) {
                 </h2>
                 <p>{agent.description}</p>
 
-                <h3>{t("ai_summary")}</h3>
-                <AgentSummary agent={agent} />
+                <FeatureGate phase="full">
+                  <h3>{t("ai_summary")}</h3>
+                  <AgentSummary agent={agent} />
+                </FeatureGate>
 
                 <h3>{t("supported_languages")}</h3>
                 <div className="flex flex-wrap gap-3 my-4">
@@ -131,25 +141,28 @@ export default function AgentPage({ params }: AgentPageProps) {
               </div>
             </TabsContent>
 
-            <TabsContent value="compatibility">
-              <div className="prose max-w-none">
-                <h2>{t("compatibility")}</h2>
-                <h3>{t("integrations")}</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 my-4">
-                  {agent.integrations.map((integration) => (
-                    <div key={integration} className="border rounded-lg p-4 text-center">
-                      {integration}
-                    </div>
-                  ))}
+            <FeatureGate phase="full">
+              <TabsContent value="compatibility">
+                <div className="prose max-w-none">
+                  <h2>{t("compatibility")}</h2>
+                  <h3>{t("integrations")}</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 my-4">
+                    {agent.integrations.map((integration) => (
+                      <div key={integration} className="border rounded-lg p-4 text-center">
+                        {integration}
+                      </div>
+                    ))}
+                  </div>
+
+                  <h3>{t("technical_requirements")}</h3>
+                  <p>{agent.technicalRequirements}</p>
                 </div>
+              </TabsContent>
+            </FeatureGate>
 
-                <h3>{t("technical_requirements")}</h3>
-                <p>{agent.technicalRequirements}</p>
-              </div>
-            </TabsContent>
-
-            {agent.selfHosted && (
-              <TabsContent value="self-hosted">
+            <FeatureGate phase="full">
+              {agent.selfHosted && (
+                <TabsContent value="self-hosted">
                 <div className="prose max-w-none">
                   <h2>{t("self_hosted")}</h2>
                   <p>
@@ -164,12 +177,13 @@ export default function AgentPage({ params }: AgentPageProps) {
                     </Button>
                   )}
 
-                  <h3>{t("api_documentation")}</h3>
-                  <p>{t("api_documentation_description")}</p>
-                  <div className="bg-gray-100 p-4 rounded-md my-4">
-                    <pre className="text-sm overflow-x-auto">
-                      <code>
-                        {`// Example API call
+                  <FeatureGate feature="codeExamples">
+                    <h3>{t("api_documentation")}</h3>
+                    <p>{t("api_documentation_description")}</p>
+                    <div className="bg-gray-100 p-4 rounded-md my-4">
+                      <pre className="text-sm overflow-x-auto">
+                        <code>
+                          {`// Example API call
 fetch('https://api.example.com/agents/${agent.id}', {
   method: 'POST',
   headers: {
@@ -180,13 +194,16 @@ fetch('https://api.example.com/agents/${agent.id}', {
     message: 'Your message here'
   })
 })`}
-                      </code>
-                    </pre>
-                  </div>
+                        </code>
+                      </pre>
+                    </div>
+                  </FeatureGate>
                 </div>
               </TabsContent>
             )}
+            </FeatureGate>
 
+            <FeatureGate phase="full">
             {!agent.selfHosted && (
               <TabsContent value="integration">
                 <div className="prose max-w-none">
@@ -203,12 +220,13 @@ fetch('https://api.example.com/agents/${agent.id}', {
                     <li>{t("implementation_step_4")}</li>
                   </ol>
 
-                  <h3>{t("api_documentation")}</h3>
-                  <p>{t("api_documentation_description")}</p>
-                  <div className="bg-gray-100 p-4 rounded-md my-4">
-                    <pre className="text-sm overflow-x-auto">
-                      <code>
-                        {`// Example API call
+                  <FeatureGate feature="codeExamples">
+                    <h3>{t("api_documentation")}</h3>
+                    <p>{t("api_documentation_description")}</p>
+                    <div className="bg-gray-100 p-4 rounded-md my-4">
+                      <pre className="text-sm overflow-x-auto">
+                        <code>
+                          {`// Example API call
 fetch('https://api.example.com/agents/${agent.id}', {
   method: 'POST',
   headers: {
@@ -219,13 +237,16 @@ fetch('https://api.example.com/agents/${agent.id}', {
     message: 'Your message here'
   })
 })`}
-                      </code>
-                    </pre>
-                  </div>
+                        </code>
+                      </pre>
+                    </div>
+                  </FeatureGate>
                 </div>
               </TabsContent>
             )}
+            </FeatureGate>
 
+            <FeatureGate phase="full">
             {agent.conciergeCompatible && (
               <TabsContent value="concierge">
                 <div className="prose max-w-none">
@@ -283,6 +304,7 @@ fetch('https://api.example.com/agents/${agent.id}', {
                 </div>
               </TabsContent>
             )}
+            </FeatureGate>
 
             <TabsContent value="reviews">
               <div className="prose max-w-none">
