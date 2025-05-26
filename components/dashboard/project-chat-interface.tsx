@@ -78,7 +78,7 @@ export function ProjectChatInterface({ project, chats, onNewChat }: ProjectChatI
     setTimeout(() => {
       const userMessage: Message = {
         id: Date.now().toString(),
-        content: `${t("file_upload_success")}: example.pdf`,
+        content: `${t("chat_file_upload_success")}: example.pdf`,
         sender: "user",
         timestamp: new Date(),
       }
@@ -91,7 +91,7 @@ export function ProjectChatInterface({ project, chats, onNewChat }: ProjectChatI
       setTimeout(() => {
         const agentMessage: Message = {
           id: (Date.now() + 1).toString(),
-          content: `${t("processing_file")} example.pdf. ${generateAgentResponse("file", project.agent)}`,
+          content: `${t("chat_processing_file")} example.pdf. ${generateAgentResponse("file", project.agent)}`,
           sender: "agent",
           timestamp: new Date(),
         }
@@ -221,7 +221,7 @@ export function ProjectChatInterface({ project, chats, onNewChat }: ProjectChatI
                     <div className="max-w-md">
                       <h3 className="text-lg font-medium mb-2">{t("start_conversation")}</h3>
                       <p className="text-gray-500 text-sm">
-                        {t("start_conversation_with_agent", { agent: project.agent.name })}
+                        {t("start_conversation_with_agent").replace("{agent}", project.agent.name)}
                       </p>
                     </div>
                   </div>
@@ -268,7 +268,7 @@ export function ProjectChatInterface({ project, chats, onNewChat }: ProjectChatI
                   {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
                 </Button>
                 <Input
-                  placeholder={t("message_placeholder")}
+                  placeholder={t("chat_message_placeholder")}
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   disabled={isLoading}

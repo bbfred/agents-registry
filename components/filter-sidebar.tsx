@@ -53,7 +53,7 @@ export function FilterSidebar() {
         </AccordionItem>
 
         <AccordionItem value="languages">
-          <AccordionTrigger>{t("supported_languages")}</AccordionTrigger>
+          <AccordionTrigger>{t("filter_supported_languages")}</AccordionTrigger>
           <AccordionContent>
             <div className="space-y-2">
               <div className="flex items-center space-x-2">

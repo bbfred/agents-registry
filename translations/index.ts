@@ -4,7 +4,7 @@ const translations = {
     discover_agents: "Discover Agents",
     all_agents: "All Agents",
     self_hosted_agents: "Self-hosted Agents",
-    concierge_compatible: "Concierge Compatible",
+    concierge_compatible_nav: "Concierge Compatible",
     categories: "Categories",
     for_businesses: "For Businesses",
     about_us: "About Us",
@@ -72,7 +72,7 @@ const translations = {
     blog: "Blog",
     guides: "Guides",
     faq: "FAQ",
-    support: "Support",
+    footer_support: "Support",
     about_us_footer: "About Us",
     contact: "Contact",
     careers: "Careers",
@@ -84,7 +84,7 @@ const translations = {
 
     // Agent cards
     self_hosted_badge: "Self-hosted",
-    concierge_compatible: "Concierge Compatible",
+    concierge_compatible_badge: "Concierge Compatible",
     try_now: "Try Now",
     filter_self_hosted: "Self-hosted",
     filter_concierge: "Concierge Compatible",
@@ -151,14 +151,14 @@ const translations = {
     agent_running: "is now running",
     stop_agent: "Stop Agent",
     start_agent: "Start Agent",
-    message_placeholder: "Type your message...",
-    file_upload_success: "File uploaded successfully",
-    processing_file: "Processing file",
+    agent_message_placeholder: "Type your message...",
+    agent_file_upload_success: "File uploaded successfully",
+    agent_processing_file: "Processing file",
 
     // Filter sidebar
     reset_filters: "Reset Filters",
-    supported_languages: "Supported Languages",
-    filter_tasks: "Filter Tasks",
+    filter_supported_languages: "Supported Languages",
+    filter_by_tasks: "Filter Tasks",
     apply_filters: "Apply Filters",
 
     // Project-based dashboard
@@ -253,9 +253,9 @@ const translations = {
     no_active_conversation: "No active conversation",
     select_conversation_or_create_new: "Select a conversation or create a new one",
     is_typing: "is typing...",
-    message_placeholder: "Type your message...",
-    file_upload_success: "File uploaded successfully",
-    processing_file: "Processing file",
+    chat_message_placeholder: "Type your message...",
+    chat_file_upload_success: "File uploaded successfully",
+    chat_processing_file: "Processing file",
 
     // Task management
     new_task: "New Task",
@@ -615,6 +615,7 @@ const translations = {
 
     // Filter sidebar
     pricing_model: "Pricing Model",
+    paid: "Paid",
   },
   de: {
     // Existing German translations...

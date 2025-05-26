@@ -75,7 +75,7 @@ export function AgentChatInterface({ agent }: AgentChatInterfaceProps) {
     setTimeout(() => {
       const userMessage: Message = {
         id: Date.now().toString(),
-        content: `${t("file_upload_success")}: ${file.name}`,
+        content: `${t("agent_file_upload_success")}: ${file.name}`,
         sender: "user",
         timestamp: new Date(),
       }
@@ -88,7 +88,7 @@ export function AgentChatInterface({ agent }: AgentChatInterfaceProps) {
       setTimeout(() => {
         const agentMessage: Message = {
           id: (Date.now() + 1).toString(),
-          content: `${t("processing_file")} ${file.name}. ${generateAgentResponse("file", agent)}`,
+          content: `${t("agent_processing_file")} ${file.name}. ${generateAgentResponse("file", agent)}`,
           sender: "agent",
           timestamp: new Date(),
         }
@@ -198,7 +198,7 @@ export function AgentChatInterface({ agent }: AgentChatInterfaceProps) {
             />
           </Button>
           <Input
-            placeholder={t("message_placeholder")}
+            placeholder={t("agent_message_placeholder")}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             disabled={!isRunning || isLoading}

@@ -15,7 +15,9 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
+  // Initialize with 'en' and handle localStorage in useEffect to avoid hydration mismatch
   const [language, setLanguage] = useState<Language>("en")
+  const [isHydrated, setIsHydrated] = useState(false)
 
   // Try to get the language from localStorage on client side
   useEffect(() => {
@@ -23,16 +25,22 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     if (storedLanguage && ["en", "de", "fr", "it", "rm"].includes(storedLanguage)) {
       setLanguage(storedLanguage)
     }
+    setIsHydrated(true)
   }, [])
 
   // Save language to localStorage when it changes
   useEffect(() => {
-    localStorage.setItem("language", language)
-  }, [language])
+    if (isHydrated) {
+      localStorage.setItem("language", language)
+    }
+  }, [language, isHydrated])
 
   const t = (key: string): string => {
     // Get the translation for the current language, fallback to English if not found
-    const translation = translations[language]?.[key] || translations.en[key]
+    const currentTranslations = translations[language] as Record<string, string>
+    const englishTranslations = translations.en as Record<string, string>
+    
+    const translation = currentTranslations?.[key] || englishTranslations[key]
 
     // If translation is still not found, return the key itself
     return translation || key

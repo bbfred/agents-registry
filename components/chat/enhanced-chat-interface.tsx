@@ -396,7 +396,7 @@ export function EnhancedChatInterface({ agentName, agentLogo }: EnhancedChatInte
               <Upload className="h-4 w-4" />
             </Button>
             <Input
-              placeholder={t("message_placeholder")}
+              placeholder={t("chat_message_placeholder")}
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               disabled={isLoading}

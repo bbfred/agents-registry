@@ -172,7 +172,7 @@ export function Header() {
                 {t("self_hosted_agents")}
               </Link>
               <Link href="/concierge" className="py-2 px-3 hover:bg-gray-100 rounded-md">
-                {t("concierge_compatible")}
+                {t("concierge_compatible_nav")}
               </Link>
               <Link href="/for-businesses" className="py-2 px-3 hover:bg-gray-100 rounded-md">
                 {t("for_businesses")}
