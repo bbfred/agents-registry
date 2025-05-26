@@ -125,13 +125,13 @@ export default function ContactPage() {
               <CardDescription>{t("contact_form_description")}</CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid gap-4 md:grid-cols-2">
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="name">{t("full_name")}</Label>
                     <Input id="name" name="name" value={formData.name} onChange={handleChange} required />
                   </div>
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="email">{t("email")}</Label>
                     <Input
                       id="email"
@@ -144,7 +144,7 @@ export default function ContactPage() {
                   </div>
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="category">{t("inquiry_category")}</Label>
                     <Select
                       value={formData.category}
@@ -162,12 +162,12 @@ export default function ContactPage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="subject">{t("subject")}</Label>
                     <Input id="subject" name="subject" value={formData.subject} onChange={handleChange} required />
                   </div>
                 </div>
-                <div>
+                <div className="space-y-2">
                   <Label htmlFor="message">{t("message")}</Label>
                   <Textarea
                     id="message"
@@ -175,11 +175,11 @@ export default function ContactPage() {
                     value={formData.message}
                     onChange={handleChange}
                     rows={6}
-                    placeholder={t("message_placeholder")}
+                    placeholder={t("contact_message_placeholder")}
                     required
                   />
                 </div>
-                <Button type="submit" size="lg">
+                <Button type="submit" size="lg" className="mt-2">
                   {t("send_message")}
                 </Button>
               </form>

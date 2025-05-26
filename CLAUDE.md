@@ -5,11 +5,11 @@ The Swiss AI Agents Registry is a curated platform for discovering, comparing, a
 
 ## Tech Stack
 - **Framework**: Next.js with App Router
-- **UI Components**: shadcn/ui (Radix UI + Tailwind CSS)
-- **Styling**: Tailwind CSS with CSS variables for theming
+- **UI Components**: shadcn/ui (Radix UI + Tailwind CSS v4)
+- **Styling**: Tailwind CSS v4 with CSS variables for theming
 - **Language**: TypeScript
 - **Database**: Supabase (planned)
-- **Authentication**: TBD (likely Supabase Auth)
+- **Authentication**: Supabase Auth (planned)
 
 ## Key Concepts
 
@@ -88,12 +88,69 @@ npm run lint      # Run ESLint
 - Translations are incomplete (only English fully translated)
 - No backend integration yet
 
-## Next Steps
-1. Set up feature flags system
-2. Create Supabase schema and integrate
-3. Simplify navigation for MVP
-4. Remove complex features from initial launch
-5. Set up proper authentication
+## Development Progress
+
+### ✅ Phase 1: MVP Simplification (Completed)
+- Implemented feature flag system with environment-based phases
+- Created FeatureGate component for conditional rendering
+- Simplified navigation to show only core features
+- Reduced agent cards to essential information
+- Simplified filter sidebar (categories, languages, verification only)
+- Streamlined agent details to 3 tabs (Overview, Capabilities, Reviews)
+- Simplified registration form to single page with basic fields
+- Added route protection for non-MVP features
+
+### 📋 Phase 2: Supabase Backend (Next)
+1. Database Schema:
+   - Agents table (name, description, categories, languages, etc.)
+   - Providers table (company information)
+   - Reviews table (ratings and comments)
+   - Inquiries table (contact form submissions)
+
+2. API Implementation:
+   - GET /api/agents (list with filtering)
+   - GET /api/agents/[id] (agent details)
+   - POST /api/agents (registration)
+   - POST /api/inquiries (contact form)
+
+3. Data Migration:
+   - Move from static data to database
+   - Set up initial seed data
+
+### 🔮 Phase 3: Authentication
+- Implement Supabase Auth
+- Provider accounts for agent management
+- Protected routes for registration/editing
+- User profiles and saved agents
+
+### 🚀 Phase 4: Progressive Feature Rollout
+- Enable features via NEXT_PUBLIC_FEATURE_PHASE
+- auth: Adds authentication features
+- full: Enables all features (dashboard, blog, etc.)
+
+## Feature Flag Usage
+
+```bash
+# .env.local
+NEXT_PUBLIC_FEATURE_PHASE=mvp   # Default: core features only
+NEXT_PUBLIC_FEATURE_PHASE=auth  # MVP + authentication
+NEXT_PUBLIC_FEATURE_PHASE=full  # All features enabled
+```
+
+## Key Files Created/Modified
+
+### Feature System
+- `/lib/features.ts` - Feature flag configuration
+- `/components/feature-gate.tsx` - Conditional rendering component
+- `/components/dashboard-protection.tsx` - Dashboard route protection
+- `/components/feature-protection.tsx` - General route protection
+
+### Simplified Components
+- `agent-card.tsx` - Removed advanced badges
+- `filter-sidebar.tsx` - Basic filters only
+- `header.tsx` - MVP navigation only
+- `agents/[id]/page.tsx` - 3 tabs instead of 6-7
+- `register-agent/page.tsx` - Single page form
 
 ## Deployment
 - Currently planning to use Vercel for hosting
