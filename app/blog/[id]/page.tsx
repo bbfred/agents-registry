@@ -88,7 +88,7 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
       <div className="container mx-auto max-w-6xl py-8 px-4">
         <div className="text-center py-12">
           <h2 className="text-2xl font-bold mb-2">Article not found</h2>
-          <p className="text-gray-500 mb-4">The article you're looking for could not be found</p>
+          <p className="text-gray-500 mb-4">The article you&apos;re looking for could not be found</p>
           <Button asChild>
             <Link href="/blog">Back to Blog</Link>
           </Button>

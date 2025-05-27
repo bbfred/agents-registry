@@ -15,18 +15,22 @@ import { AgentChatInterface } from "@/components/agent-chat-interface"
 import { useState } from "react"
 import Link from "next/link"
 import { FeatureGate } from "@/components/feature-gate"
-import { isFeatureEnabled } from "@/lib/features"
 
 interface AgentPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
-export default function AgentPage({ params }: AgentPageProps) {
+export default async function AgentPage({ params }: AgentPageProps) {
+  const { id } = await params
+  return <AgentPageClient id={id} />
+}
+
+function AgentPageClient({ id }: { id: string }) {
   const { t } = useLanguage()
   const [showDemo, setShowDemo] = useState(false)
-  const agent = allAgents.find((a) => a.id === params.id)
+  const agent = allAgents.find((a) => a.id === id)
 
   if (!agent) {
     notFound()

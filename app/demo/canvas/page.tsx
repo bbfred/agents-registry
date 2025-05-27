@@ -237,12 +237,12 @@ export default SwissAIAgentAPI;`,
 export default function CanvasDemoPage() {
   const [selectedArtifact, setSelectedArtifact] = useState<keyof typeof sampleArtifacts>("text")
 
-  const handleSave = (artifact: any) => {
+  const handleSave = (artifact: unknown) => {
     console.log("Saving artifact:", artifact)
     // In a real app, this would save to a backend
   }
 
-  const handleExport = (artifact: any, format: string) => {
+  const handleExport = (artifact: unknown, format: string) => {
     console.log("Exporting artifact:", artifact, "as", format)
     // In a real app, this would trigger a download
   }

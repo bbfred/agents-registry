@@ -309,7 +309,7 @@ export function ProjectChatInterface({ project, chats, onNewChat }: ProjectChatI
 }
 
 // Helper function to generate agent responses based on input and agent type
-function generateAgentResponse(input: string, agent: any): string {
+function generateAgentResponse(input: string, agent: { category?: string }): string {
   // This would be replaced with actual API calls to the agent in a real implementation
   const responses: Record<string, string[]> = {
     "swiss-customer-support": [

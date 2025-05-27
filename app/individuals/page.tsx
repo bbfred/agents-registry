@@ -119,7 +119,7 @@ const testimonials = [
 export default function IndividualsPage() {
   return (
     <ClientPage>
-      {({ t }) => (
+      {({ }) => (
         <main className="container mx-auto max-w-6xl py-8 px-4">
           {/* Hero Section */}
           <div className="text-center mb-12">
@@ -216,7 +216,7 @@ export default function IndividualsPage() {
                         <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                       ))}
                     </div>
-                    <p className="text-gray-600 mb-4">"{testimonial.text}"</p>
+                    <p className="text-gray-600 mb-4">&quot;{testimonial.text}&quot;</p>
                     <div>
                       <div className="font-semibold">{testimonial.name}</div>
                       <div className="text-sm text-gray-500">{testimonial.location}</div>

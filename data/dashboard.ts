@@ -276,3 +276,53 @@ export const dashboardStats: DashboardStats = {
   completedTasks: mockTasks.filter((t) => t.status === "completed").length,
   totalFiles: mockFiles.length,
 }
+
+// Mock agent instances for dashboard
+export const mockAgentInstances = [
+  {
+    id: "agent-1",
+    agent: selfHostedAgents[0],
+    category: "Customer Service",
+    status: "active" as const,
+    conversationCount: 8,
+    dateAdded: new Date(2023, 5, 15),
+    favorite: true,
+  },
+  {
+    id: "agent-2",
+    agent: selfHostedAgents[1],
+    category: "Translation",
+    status: "active" as const,
+    conversationCount: 4,
+    dateAdded: new Date(2023, 7, 3),
+    favorite: false,
+  },
+]
+
+// Mock conversations for agents
+export const mockConversations = [
+  {
+    id: "conv-1",
+    agentInstanceId: "agent-1",
+    title: "Product inquiry from John",
+    messageCount: 15,
+    lastMessageDate: new Date(2023, 11, 29, 14, 35),
+    status: "active" as const,
+  },
+  {
+    id: "conv-2",
+    agentInstanceId: "agent-1",
+    title: "Billing question from Maria",
+    messageCount: 8,
+    lastMessageDate: new Date(2023, 11, 28, 11, 20),
+    status: "active" as const,
+  },
+  {
+    id: "conv-3",
+    agentInstanceId: "agent-2",
+    title: "Contract translation DE-FR",
+    messageCount: 6,
+    lastMessageDate: new Date(2023, 11, 28, 16, 20),
+    status: "active" as const,
+  },
+]

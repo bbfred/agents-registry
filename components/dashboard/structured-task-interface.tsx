@@ -45,7 +45,6 @@ interface Task {
 export function StructuredTaskInterface({
   tasks = [],
   onCreateTask,
-  onUpdateTask,
 }: {
   tasks?: Task[]
   onCreateTask?: () => void

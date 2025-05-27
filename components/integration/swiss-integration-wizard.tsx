@@ -87,7 +87,7 @@ export function SwissIntegrationWizard() {
     },
   })
 
-  const updateFormData = (section: string, field: string, value: any) => {
+  const updateFormData = (section: string, field: string, value: unknown) => {
     setFormData((prev) => ({
       ...prev,
       [section]: {

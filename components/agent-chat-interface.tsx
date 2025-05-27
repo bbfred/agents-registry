@@ -141,7 +141,7 @@ export function AgentChatInterface({ agent }: AgentChatInterfaceProps) {
               <div className="max-w-md">
                 <h3 className="text-lg font-medium mb-2">{t("agent_interface")}</h3>
                 <p className="text-gray-500 text-sm">
-                  {t("click")} "{t("start_agent")}" {t("to_begin_interacting")}
+                  {t("click")} &quot;{t("start_agent")}&quot; {t("to_begin_interacting")}
                 </p>
               </div>
             </div>

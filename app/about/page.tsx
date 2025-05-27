@@ -81,7 +81,7 @@ export default function AboutPage() {
           <div className="md:w-1/2">
             <h1 className="text-3xl md:text-4xl font-bold mb-4">About Swiss AI Registry</h1>
             <p className="text-xl text-gray-600 mb-6">
-              We're building the trusted platform for AI agents in Switzerland, ensuring quality, compliance, and
+              We&apos;re building the trusted platform for AI agents in Switzerland, ensuring quality, compliance, and
               accessibility for all.
             </p>
           </div>
@@ -244,7 +244,7 @@ export default function AboutPage() {
             <div className="mb-6 md:mb-0 md:mr-8">
               <h2 className="text-2xl md:text-3xl font-bold mb-4">{t("join_our_team")}</h2>
               <p className="text-white/90 max-w-xl">
-                We're always looking for talented individuals who are passionate about AI, technology, and creating
+                We&apos;re always looking for talented individuals who are passionate about AI, technology, and creating
                 positive impact. Join us in building the future of AI in Switzerland.
               </p>
             </div>

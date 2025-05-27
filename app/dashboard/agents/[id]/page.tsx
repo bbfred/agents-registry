@@ -24,7 +24,7 @@ export default function AgentDetailPage({ params }: AgentDetailPageProps) {
   const { t } = useLanguage()
   const [isLoading, setIsLoading] = useState(true)
   const [instance, setInstance] = useState(mockAgentInstances.find((a) => a.id === params.id))
-  const [agentConversations, setAgentConversations] = useState(
+  const [agentConversations] = useState(
     mockConversations.filter((c) => c.agentInstanceId === params.id),
   )
   const [isChangingStatus, setIsChangingStatus] = useState(false)

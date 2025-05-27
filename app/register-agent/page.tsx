@@ -11,7 +11,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
-import { FeatureGate } from "@/components/feature-gate"
 
 export default function RegisterAgentPage() {
   const { t } = useLanguage()

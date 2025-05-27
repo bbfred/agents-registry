@@ -45,21 +45,26 @@ const agentSubmissions = [
 ]
 
 interface AgentDetailPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
-export default function AgentDetailPage({ params }: AgentDetailPageProps) {
+export default async function AgentDetailPage({ params }: AgentDetailPageProps) {
+  const { id } = await params
+  return <AgentDetailClient id={id} />
+}
+
+function AgentDetailClient({ id }: { id: string }) {
   const { t } = useLanguage()
-  const agent = agentSubmissions.find((a) => a.id === params.id)
+  const agent = agentSubmissions.find((a) => a.id === id)
 
   if (!agent) {
     return (
       <div className="container mx-auto max-w-7xl py-8 px-4">
         <div className="text-center py-12">
           <h2 className="text-2xl font-bold mb-2">{t("agent_not_found")}</h2>
-          <p className="text-gray-500 mb-4">The agent you're looking for could not be found</p>
+          <p className="text-gray-500 mb-4">The agent you&apos;re looking for could not be found</p>
           <Button asChild>
             <Link href="/admin">{t("back_to_dashboard")}</Link>
           </Button>

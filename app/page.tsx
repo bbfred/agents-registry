@@ -6,7 +6,6 @@ import { ChevronRight, Shield, Globe, Sparkles } from "lucide-react"
 import { featuredAgents } from "@/data/agents"
 import Link from "next/link"
 import { PageWrapper } from "@/components/page-wrapper"
-import { FeatureGate } from "@/components/feature-gate"
 
 export default function Home() {
   

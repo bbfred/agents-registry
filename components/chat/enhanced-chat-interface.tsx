@@ -70,7 +70,7 @@ export function EnhancedChatInterface({ agentName, agentLogo }: EnhancedChatInte
     }, 1500)
   }
 
-  const handleModalSubmit = (modalId: string, data: any) => {
+  const handleModalSubmit = (modalId: string, data: Record<string, unknown>) => {
     setActiveModal(null)
 
     // Add user response message
@@ -291,7 +291,7 @@ export function EnhancedChatInterface({ agentName, agentLogo }: EnhancedChatInte
     }
   }
 
-  const formatModalResponse = (modalId: string, data: any): string => {
+  const formatModalResponse = (modalId: string, data: Record<string, unknown>): string => {
     switch (modalId) {
       case "contact-form":
         return `Formular ausgefüllt: ${data.name} (${data.email}) von ${data.company || "Privat"}`
@@ -308,7 +308,7 @@ export function EnhancedChatInterface({ agentName, agentLogo }: EnhancedChatInte
     }
   }
 
-  const generateModalFollowUp = (modalId: string, data: any): string => {
+  const generateModalFollowUp = (modalId: string, data: Record<string, unknown>): string => {
     switch (modalId) {
       case "contact-form":
         return `Vielen Dank, ${data.name}! Ich habe Ihre Kontaktdaten erhalten und werde mich bald bei Ihnen melden.`

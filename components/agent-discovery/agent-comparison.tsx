@@ -109,7 +109,7 @@ const sampleAgents: Agent[] = [
 ]
 
 export function AgentComparison({ agents = sampleAgents }: { agents?: Agent[] }) {
-  const [selectedAgents, setSelectedAgents] = useState<string[]>(agents.slice(0, 3).map((a) => a.id))
+  const [selectedAgents] = useState<string[]>(agents.slice(0, 3).map((a) => a.id))
   const [expandedSections, setExpandedSections] = useState<string[]>(["overview"])
 
   const toggleSection = (section: string) => {

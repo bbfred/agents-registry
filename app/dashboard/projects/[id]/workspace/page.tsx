@@ -103,7 +103,7 @@ const sampleFiles = [
   },
 ]
 
-export default function ProjectWorkspacePage({ params }: { params: { id: string } }) {
+export default function ProjectWorkspacePage({ }: { params: { id: string } }) {
   const { t } = useLanguage()
   const [activeTab, setActiveTab] = useState("chat")
 

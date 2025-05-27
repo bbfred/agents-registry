@@ -14,7 +14,7 @@ interface InquiryFormProps {
   agentId: string
 }
 
-export function InquiryForm({ agentId }: InquiryFormProps) {
+export function InquiryForm({ }: InquiryFormProps) {
   const [formState, setFormState] = useState({
     name: "",
     email: "",
@@ -42,7 +42,7 @@ export function InquiryForm({ agentId }: InquiryFormProps) {
     try {
       await new Promise((resolve) => setTimeout(resolve, 1500))
       setStatus("success")
-    } catch (error) {
+    } catch {
       setStatus("error")
     }
   }

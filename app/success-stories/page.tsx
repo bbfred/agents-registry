@@ -116,7 +116,7 @@ const metrics = [
 export default function SuccessStoriesPage() {
   return (
     <ClientPage>
-      {({ t }) => (
+      {({ }) => (
         <main className="container mx-auto max-w-6xl py-8 px-4">
           {/* Hero Section */}
           <div className="text-center mb-12">
@@ -198,7 +198,7 @@ export default function SuccessStoriesPage() {
 
                       <div className="bg-gray-50 p-4 rounded-lg">
                         <Quote className="h-5 w-5 text-gray-400 mb-2" />
-                        <p className="text-gray-700 italic mb-3">"{story.quote}"</p>
+                        <p className="text-gray-700 italic mb-3">&quot;{story.quote}&quot;</p>
                         <div className="text-sm">
                           <div className="font-semibold">{story.author}</div>
                           <div className="text-gray-500">{story.company}</div>

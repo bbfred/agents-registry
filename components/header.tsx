@@ -16,8 +16,7 @@ import { Menu, X, LayoutDashboard, Bot } from "lucide-react"
 import { useState } from "react"
 import { useLanguage } from "@/contexts/language-context"
 import { LanguageSwitcher } from "@/components/language-switcher"
-import { FeatureGate, HideInMVP, FullFeaturesOnly } from "@/components/feature-gate"
-import { isFeatureEnabled } from "@/lib/features"
+import { FeatureGate, FullFeaturesOnly } from "@/components/feature-gate"
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -53,13 +52,13 @@ export function Header() {
                       <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-2">
                         <li className="row-span-3">
                           <NavigationMenuLink asChild>
-                            <a
+                            <Link
                               className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-primary/80 to-primary p-6 no-underline outline-none focus:shadow-md"
                               href="/"
                             >
                               <div className="mt-4 mb-2 text-lg font-medium text-white">{t("why_ai_agents")}</div>
                               <p className="text-sm leading-tight text-white/90">{t("learn_how_ai_agents_help")}</p>
-                            </a>
+                            </Link>
                           </NavigationMenuLink>
                         </li>
                         <ListItem href="/use-cases" title={t("use_cases")}>

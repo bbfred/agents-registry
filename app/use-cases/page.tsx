@@ -73,7 +73,7 @@ const useCases = [
 export default function UseCasesPage() {
   return (
     <ClientPage>
-      {({ t }) => (
+      {({ }) => (
         <main className="container mx-auto max-w-6xl py-8 px-4">
           {/* Hero Section */}
           <div className="text-center mb-12">

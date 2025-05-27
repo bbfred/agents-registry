@@ -68,7 +68,6 @@ export function AICanvasInterface({
   initialArtifact,
   onSave,
   onExport,
-  collaborative = false,
 }: {
   initialArtifact?: Artifact
   onSave?: (artifact: Artifact) => void
@@ -91,10 +90,9 @@ export function AICanvasInterface({
     },
   )
 
-  const [isEditing, setIsEditing] = useState(false)
   const [viewMode, setViewMode] = useState<"split" | "edit" | "preview">("split")
   const [showComments, setShowComments] = useState(false)
-  const [comments, setComments] = useState<CanvasComment[]>([])
+  const [comments] = useState<CanvasComment[]>([])
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [undoStack, setUndoStack] = useState<string[]>([])
   const [redoStack, setRedoStack] = useState<string[]>([])

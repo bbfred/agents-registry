@@ -22,7 +22,7 @@ export default function DemoPage() {
             <EnhancedChatInterface agentName="Swiss Assistant" agentLogo="/placeholder.svg?height=32&width=32" />
           </CardContent>
           <CardFooter>
-            <p className="text-sm text-gray-600">Try commands: "form", "quiz", "upload", "setup", "feedback"</p>
+            <p className="text-sm text-gray-600">Try commands: &quot;form&quot;, &quot;quiz&quot;, &quot;upload&quot;, &quot;setup&quot;, &quot;feedback&quot;</p>
           </CardFooter>
         </Card>
       </div>

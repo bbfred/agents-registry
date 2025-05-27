@@ -27,7 +27,7 @@ interface Message {
 interface Artifact {
   id: string
   type: "text" | "image" | "file" | "code" | "table" | "chart"
-  content: any
+  content: unknown
   metadata?: {
     title?: string
     description?: string

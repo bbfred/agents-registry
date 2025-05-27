@@ -123,7 +123,7 @@ export function ProjectTaskList({ project, tasks, onTaskUpdate, onTaskCreate, on
     <>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div className="flex items-center gap-2">
-          <Select value={filter} onValueChange={(value: any) => setFilter(value)}>
+          <Select value={filter} onValueChange={(value) => setFilter(value)}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder={t("filter_tasks")} />
             </SelectTrigger>
@@ -172,7 +172,7 @@ export function ProjectTaskList({ project, tasks, onTaskUpdate, onTaskCreate, on
                   <Label htmlFor="taskPriority">{t("priority")}</Label>
                   <Select
                     value={newTask.priority}
-                    onValueChange={(value: any) => setNewTask({ ...newTask, priority: value })}
+                    onValueChange={(value) => setNewTask({ ...newTask, priority: value as "low" | "medium" | "high" })}
                   >
                     <SelectTrigger id="taskPriority">
                       <SelectValue placeholder={t("select_priority")} />
@@ -345,7 +345,7 @@ export function ProjectTaskList({ project, tasks, onTaskUpdate, onTaskCreate, on
                   <Label htmlFor="editTaskPriority">{t("priority")}</Label>
                   <Select
                     value={activeTask.priority}
-                    onValueChange={(value: any) => setActiveTask({ ...activeTask, priority: value })}
+                    onValueChange={(value) => setActiveTask({ ...activeTask, priority: value as "low" | "medium" | "high" })}
                   >
                     <SelectTrigger id="editTaskPriority">
                       <SelectValue />
@@ -361,7 +361,7 @@ export function ProjectTaskList({ project, tasks, onTaskUpdate, onTaskCreate, on
                   <Label htmlFor="editTaskStatus">{t("status")}</Label>
                   <Select
                     value={activeTask.status}
-                    onValueChange={(value: any) => setActiveTask({ ...activeTask, status: value })}
+                    onValueChange={(value) => setActiveTask({ ...activeTask, status: value as "pending" | "in_progress" | "completed" })}
                   >
                     <SelectTrigger id="editTaskStatus">
                       <SelectValue />

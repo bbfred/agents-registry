@@ -57,7 +57,7 @@ export function FileManagementInterface({
   onCreateFolder?: () => void
 }) {
   const { t } = useLanguage()
-  const [fileList, setFileList] = useState<FileItem[]>(files)
+  const [fileList] = useState<FileItem[]>(files)
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [searchQuery, setSearchQuery] = useState("")
   const [sortBy, setSortBy] = useState("name")

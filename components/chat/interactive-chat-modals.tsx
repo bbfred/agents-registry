@@ -19,8 +19,8 @@ export interface ChatModal {
   type: "form" | "multiple-choice" | "file-upload" | "step-process" | "confirmation" | "rating"
   title: string
   description?: string
-  data: any
-  onSubmit: (data: any) => void
+  data: Record<string, unknown>
+  onSubmit: (data: Record<string, unknown>) => void
   onCancel: () => void
 }
 
@@ -29,7 +29,7 @@ interface InteractiveChatModalProps {
 }
 
 export function InteractiveChatModal({ modal }: InteractiveChatModalProps) {
-  const { t } = useLanguage()
+  const { } = useLanguage()
 
   switch (modal.type) {
     case "form":
@@ -52,14 +52,14 @@ export function InteractiveChatModal({ modal }: InteractiveChatModalProps) {
 // Form Modal Component
 function FormModal({ modal }: { modal: ChatModal }) {
   const { t } = useLanguage()
-  const [formData, setFormData] = useState<Record<string, any>>({})
+  const [formData, setFormData] = useState<Record<string, unknown>>({})
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   const handleSubmit = () => {
     const newErrors: Record<string, string> = {}
 
     // Validate required fields
-    modal.data.fields?.forEach((field: any) => {
+    modal.data.fields?.forEach((field: Record<string, unknown>) => {
       if (field.required && !formData[field.name]) {
         newErrors[field.name] = t("field_required")
       }
@@ -73,7 +73,7 @@ function FormModal({ modal }: { modal: ChatModal }) {
     modal.onSubmit(formData)
   }
 
-  const updateField = (name: string, value: any) => {
+  const updateField = (name: string, value: unknown) => {
     setFormData((prev) => ({ ...prev, [name]: value }))
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }))
@@ -90,7 +90,7 @@ function FormModal({ modal }: { modal: ChatModal }) {
         {modal.description && <CardDescription>{modal.description}</CardDescription>}
       </CardHeader>
       <CardContent className="space-y-4">
-        {modal.data.fields?.map((field: any) => (
+        {modal.data.fields?.map((field: Record<string, unknown>) => (
           <div key={field.name} className="space-y-2">
             <Label htmlFor={field.name}>
               {field.label}
@@ -169,7 +169,7 @@ function MultipleChoiceModal({ modal }: { modal: ChatModal }) {
       <CardContent className="space-y-4">
         {modal.data.multiple ? (
           <div className="space-y-3">
-            {modal.data.options?.map((option: any) => (
+            {modal.data.options?.map((option: { value: string; label: string; description?: string }) => (
               <div key={option.value} className="flex items-center space-x-2">
                 <Checkbox
                   id={option.value}
@@ -187,7 +187,7 @@ function MultipleChoiceModal({ modal }: { modal: ChatModal }) {
           </div>
         ) : (
           <RadioGroup value={selectedValue} onValueChange={setSelectedValue}>
-            {modal.data.options?.map((option: any) => (
+            {modal.data.options?.map((option: { value: string; label: string; description?: string }) => (
               <div key={option.value} className="flex items-center space-x-2">
                 <RadioGroupItem value={option.value} id={option.value} />
                 <Label htmlFor={option.value} className="flex-1 cursor-pointer">
@@ -320,12 +320,12 @@ function FileUploadModal({ modal }: { modal: ChatModal }) {
 function StepProcessModal({ modal }: { modal: ChatModal }) {
   const { t } = useLanguage()
   const [currentStep, setCurrentStep] = useState(0)
-  const [stepData, setStepData] = useState<Record<number, any>>({})
+  const [stepData, setStepData] = useState<Record<number, unknown>>({})
 
   const steps = modal.data.steps || []
   const progress = ((currentStep + 1) / steps.length) * 100
 
-  const handleStepSubmit = (data: any) => {
+  const handleStepSubmit = (data: unknown) => {
     setStepData((prev) => ({ ...prev, [currentStep]: data }))
 
     if (currentStep < steps.length - 1) {
@@ -398,7 +398,7 @@ function StepProcessModal({ modal }: { modal: ChatModal }) {
 }
 
 // Helper components for step process
-function StepForm({ fields, onSubmit, initialData }: any) {
+function StepForm({ fields, onSubmit, initialData }: { fields: Array<{ name: string; label: string; type: string; required?: boolean; placeholder?: string }>; onSubmit: (data: Record<string, unknown>) => void; initialData?: Record<string, unknown> }) {
   const { t } = useLanguage()
   const [formData, setFormData] = useState(initialData || {})
 
@@ -408,7 +408,7 @@ function StepForm({ fields, onSubmit, initialData }: any) {
 
   return (
     <div className="space-y-4">
-      {fields?.map((field: any) => (
+      {fields?.map((field) => (
         <div key={field.name}>
           <Label htmlFor={field.name}>{field.label}</Label>
           <Input
@@ -426,7 +426,7 @@ function StepForm({ fields, onSubmit, initialData }: any) {
   )
 }
 
-function StepChoice({ options, multiple, onSubmit, initialData }: any) {
+function StepChoice({ options, multiple, onSubmit, initialData }: { options: Array<{ value: string; label: string }>; multiple?: boolean; onSubmit: (data: { selected: string | string[] }) => void; initialData?: { selected?: string | string[] } }) {
   const { t } = useLanguage()
   const [selected, setSelected] = useState(initialData?.selected || (multiple ? [] : ""))
 
@@ -438,7 +438,7 @@ function StepChoice({ options, multiple, onSubmit, initialData }: any) {
     <div className="space-y-4">
       {multiple ? (
         <div className="space-y-2">
-          {options?.map((option: any) => (
+          {options?.map((option) => (
             <div key={option.value} className="flex items-center space-x-2">
               <Checkbox
                 id={option.value}
@@ -457,7 +457,7 @@ function StepChoice({ options, multiple, onSubmit, initialData }: any) {
         </div>
       ) : (
         <RadioGroup value={selected} onValueChange={setSelected}>
-          {options?.map((option: any) => (
+          {options?.map((option) => (
             <div key={option.value} className="flex items-center space-x-2">
               <RadioGroupItem value={option.value} id={option.value} />
               <Label htmlFor={option.value}>{option.label}</Label>
