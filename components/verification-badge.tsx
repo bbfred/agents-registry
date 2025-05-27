@@ -5,13 +5,19 @@ import { Shield, ShieldCheck, ShieldAlert } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 
 interface VerificationBadgeProps {
-  level: "basic" | "verified" | "certified"
+  level: "basic" | "verified" | "certified" | "advanced_certified" | "none" | string
 }
 
 export function VerificationBadge({ level }: VerificationBadgeProps) {
   const { t } = useLanguage()
 
   const badgeConfig = {
+    none: {
+      icon: Shield,
+      color: "bg-gray-100 text-gray-500",
+      label: "Unverified",
+      description: "Not yet verified",
+    },
     basic: {
       icon: Shield,
       color: "bg-gray-100 text-gray-600",
@@ -30,9 +36,17 @@ export function VerificationBadge({ level }: VerificationBadgeProps) {
       label: t("certified"),
       description: t("certified_desc"),
     },
+    advanced_certified: {
+      icon: ShieldAlert,
+      color: "bg-emerald-100 text-emerald-600",
+      label: "Advanced Certified",
+      description: "Highest level of verification",
+    },
   }
 
-  const { icon: Icon, color, label, description } = badgeConfig[level]
+  // Fallback to basic if level doesn't exist
+  const config = badgeConfig[level as keyof typeof badgeConfig] || badgeConfig.basic
+  const { icon: Icon, color, label, description } = config
 
   return (
     <TooltipProvider>

@@ -10,16 +10,27 @@ import { useLanguage } from "@/contexts/language-context"
 
 interface SearchBarProps {
   className?: string
+  onSearch?: (query: string) => void
+  defaultValue?: string
 }
 
-export function SearchBar({ className }: SearchBarProps) {
-  const [query, setQuery] = useState("")
+export function SearchBar({ className, onSearch, defaultValue = "" }: SearchBarProps) {
+  const [query, setQuery] = useState(defaultValue)
   const { t } = useLanguage()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle search logic here
-    console.log("Searching for:", query)
+    onSearch?.(query)
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setQuery(value)
+    // Trigger search on input change with debouncing
+    if (onSearch) {
+      const timeoutId = setTimeout(() => onSearch(value), 300)
+      return () => clearTimeout(timeoutId)
+    }
   }
 
   return (
@@ -30,7 +41,7 @@ export function SearchBar({ className }: SearchBarProps) {
           type="text"
           placeholder={t("search_placeholder")}
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={handleInputChange}
           className="pl-10 pr-24 py-6 w-full rounded-full border-gray-300 focus:border-primary focus:ring-primary"
         />
         <Button type="submit" className="absolute right-1 top-1/2 transform -translate-y-1/2 rounded-full">

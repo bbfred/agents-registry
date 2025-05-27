@@ -5,16 +5,16 @@ import { VerificationBadge } from "@/components/verification-badge"
 import { AgentSummary } from "@/components/agent-summary"
 import { InquiryForm } from "@/components/inquiry-form"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { allAgents } from "@/data/agents"
 import { notFound } from "next/navigation"
 import Image from "next/image"
-import { Globe, ShieldCheck, Star, Server, Home } from "lucide-react"
+import { Globe, ShieldCheck, Star, Server, Home, Loader2 } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 import { Button } from "@/components/ui/button"
 import { AgentChatInterface } from "@/components/agent-chat-interface"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { FeatureGate } from "@/components/feature-gate"
+import type { Agent } from "@/types/agent"
 
 interface AgentPageProps {
   params: {
@@ -30,10 +30,67 @@ export default function AgentPage({ params }: AgentPageProps) {
 function AgentPageClient({ id }: { id: string }) {
   const { t } = useLanguage()
   const [showDemo, setShowDemo] = useState(false)
-  const agent = allAgents.find((a) => a.id === id)
+  const [agent, setAgent] = useState<Agent | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  if (!agent) {
-    notFound()
+  useEffect(() => {
+    fetchAgent()
+  }, [id])
+
+  const fetchAgent = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch(`/api/agents/${id}`)
+      
+      if (response.status === 404) {
+        notFound()
+        return
+      }
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch agent')
+      }
+      
+      const data = await response.json()
+      setAgent(data)
+      setError(null)
+    } catch (err) {
+      console.error('Error fetching agent:', err)
+      setError('Failed to load agent')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Helper function to format category slugs into readable names
+  const formatCategoryName = (slug: string): string => {
+    return slug
+      .replace(/_/g, ' ')
+      .replace(/-/g, ' ')
+      .replace(/\b\w/g, l => l.toUpperCase())
+  }
+
+  if (loading) {
+    return (
+      <main className="container mx-auto max-w-6xl py-8 px-4">
+        <div className="flex justify-center items-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin" />
+          <span className="ml-2">Loading agent...</span>
+        </div>
+      </main>
+    )
+  }
+
+  if (error || !agent) {
+    return (
+      <main className="container mx-auto max-w-6xl py-8 px-4">
+        <div className="text-center py-12">
+          <p className="text-red-600 mb-4">{error || 'Agent not found'}</p>
+          <Button onClick={fetchAgent}>Retry</Button>
+        </div>
+      </main>
+    )
   }
 
   return (
@@ -56,7 +113,7 @@ function AgentPageClient({ id }: { id: string }) {
               <div className="flex flex-wrap gap-2 mb-3">
                 {agent.categories.map((category) => (
                   <Badge key={category} variant="outline">
-                    {category}
+                    {formatCategoryName(category)}
                   </Badge>
                 ))}
               </div>

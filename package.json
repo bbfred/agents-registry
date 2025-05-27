@@ -6,7 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "migrate-agents": "npx tsx scripts/migrate-agents.ts",
+    "test-api": "npx tsx scripts/test-api.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

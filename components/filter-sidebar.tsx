@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
@@ -7,14 +8,86 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { useLanguage } from "@/contexts/language-context"
 import { FeatureGate } from "@/components/feature-gate"
 
-export function FilterSidebar() {
+interface FilterSidebarProps {
+  onFilterChange?: (categories: string[], languages: string[]) => void
+  selectedCategories?: string[]
+  selectedLanguages?: string[]
+}
+
+export function FilterSidebar({ 
+  onFilterChange, 
+  selectedCategories = [], 
+  selectedLanguages = [] 
+}: FilterSidebarProps) {
   const { t } = useLanguage()
+  const [categories, setCategories] = useState<Array<{slug: string, name: any}>>([])
+  const [loading, setLoading] = useState(true)
+
+  // Predefined languages for filtering
+  const availableLanguages = [
+    { code: 'Deutsch', name: 'Deutsch' },
+    { code: 'Français', name: 'Français' },
+    { code: 'Italiano', name: 'Italiano' },
+    { code: 'English', name: 'English' },
+    { code: 'Rumantsch', name: 'Rumantsch' }
+  ]
+
+  const verificationLevels = [
+    { value: 'basic', label: 'Basic' },
+    { value: 'verified', label: 'Verified' },
+    { value: 'certified', label: 'Certified' }
+  ]
+
+  useEffect(() => {
+    fetchCategories()
+  }, [])
+
+  const fetchCategories = async () => {
+    try {
+      // For now, use static categories until we create the API endpoint
+      const staticCategories = [
+        { slug: 'customer-service', name: { en: 'Customer Service' } },
+        { slug: 'legal', name: { en: 'Legal' } },
+        { slug: 'technical-support', name: { en: 'Technical Support' } },
+        { slug: 'translation', name: { en: 'Translation' } },
+        { slug: 'data-analysis', name: { en: 'Data Analysis' } },
+        { slug: 'marketing', name: { en: 'Marketing' } },
+        { slug: 'multilingual', name: { en: 'Multilingual' } },
+        { slug: 'support', name: { en: 'Support' } }
+      ]
+      setCategories(staticCategories)
+    } catch (error) {
+      console.error('Failed to fetch categories:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleCategoryChange = (categorySlug: string, checked: boolean) => {
+    const newCategories = checked 
+      ? [...selectedCategories, categorySlug]
+      : selectedCategories.filter(c => c !== categorySlug)
+    
+    onFilterChange?.(newCategories, selectedLanguages)
+  }
+
+  const handleLanguageChange = (languageCode: string, checked: boolean) => {
+    const newLanguages = checked 
+      ? [...selectedLanguages, languageCode]
+      : selectedLanguages.filter(l => l !== languageCode)
+    
+    onFilterChange?.(selectedCategories, newLanguages)
+  }
+
+  const handleReset = () => {
+    onFilterChange?.([], [])
+  }
 
   return (
     <div className="space-y-6">
       <div>
         <h3 className="font-semibold mb-3">Filter</h3>
-        <Button variant="outline" size="sm" className="w-full">
+        <Button variant="outline" size="sm" className="w-full" onClick={handleReset}>
           {t("reset_filters")}
         </Button>
       </div>
@@ -24,30 +97,24 @@ export function FilterSidebar() {
           <AccordionTrigger>{t("categories")}</AccordionTrigger>
           <AccordionContent>
             <div className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <Checkbox id="customer-service" />
-                <Label htmlFor="customer-service">{t("customer_service")}</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="legal" />
-                <Label htmlFor="legal">{t("legal_consultation")}</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="technical-support" />
-                <Label htmlFor="technical-support">{t("technical_support")}</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="translation" />
-                <Label htmlFor="translation">{t("translation")}</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="data-analysis" />
-                <Label htmlFor="data-analysis">{t("data_analysis")}</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="marketing" />
-                <Label htmlFor="marketing">{t("marketing")}</Label>
-              </div>
+              {loading ? (
+                <div className="text-sm text-gray-500">Loading categories...</div>
+              ) : (
+                categories.map((category) => (
+                  <div key={category.slug} className="flex items-center space-x-2">
+                    <Checkbox 
+                      id={category.slug}
+                      checked={selectedCategories.includes(category.slug)}
+                      onCheckedChange={(checked) => 
+                        handleCategoryChange(category.slug, checked as boolean)
+                      }
+                    />
+                    <Label htmlFor={category.slug}>
+                      {category.name?.en || category.slug.replace(/-/g, ' ')}
+                    </Label>
+                  </div>
+                ))
+              )}
             </div>
           </AccordionContent>
         </AccordionItem>
@@ -56,120 +123,36 @@ export function FilterSidebar() {
           <AccordionTrigger>{t("filter_supported_languages")}</AccordionTrigger>
           <AccordionContent>
             <div className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <Checkbox id="german" />
-                <Label htmlFor="german">Deutsch</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="french" />
-                <Label htmlFor="french">Français</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="italian" />
-                <Label htmlFor="italian">Italiano</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="romansh" />
-                <Label htmlFor="romansh">Rumantsch</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="english" />
-                <Label htmlFor="english">English</Label>
-              </div>
+              {availableLanguages.map((language) => (
+                <div key={language.code} className="flex items-center space-x-2">
+                  <Checkbox 
+                    id={language.code}
+                    checked={selectedLanguages.includes(language.code)}
+                    onCheckedChange={(checked) => 
+                      handleLanguageChange(language.code, checked as boolean)
+                    }
+                  />
+                  <Label htmlFor={language.code}>{language.name}</Label>
+                </div>
+              ))}
             </div>
           </AccordionContent>
         </AccordionItem>
 
         <AccordionItem value="verification">
-          <AccordionTrigger>{t("verification_levels")}</AccordionTrigger>
+          <AccordionTrigger>{t("verification_level")}</AccordionTrigger>
           <AccordionContent>
             <div className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <Checkbox id="basic" />
-                <Label htmlFor="basic">{t("basic_verification")}</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="verified" />
-                <Label htmlFor="verified">{t("verified")}</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="certified" />
-                <Label htmlFor="certified">{t("certified")}</Label>
-              </div>
+              {verificationLevels.map((level) => (
+                <div key={level.value} className="flex items-center space-x-2">
+                  <Checkbox id={level.value} />
+                  <Label htmlFor={level.value}>{level.label}</Label>
+                </div>
+              ))}
             </div>
           </AccordionContent>
         </AccordionItem>
-
-        <FeatureGate phase="full">
-          <AccordionItem value="features">
-            <AccordionTrigger>Features</AccordionTrigger>
-            <AccordionContent>
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="self-hosted" />
-                  <Label htmlFor="self-hosted">{t("filter_self_hosted")}</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="concierge-compatible" />
-                  <Label htmlFor="concierge-compatible">{t("filter_concierge")}</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="demo-available" />
-                  <Label htmlFor="demo-available">{t("filter_demo")}</Label>
-                </div>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </FeatureGate>
-
-        <AccordionItem value="pricing">
-          <AccordionTrigger>{t("pricing_model")}</AccordionTrigger>
-          <AccordionContent>
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <Checkbox id="free" />
-                <Label htmlFor="free">{t("free")}</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox id="paid" />
-                <Label htmlFor="paid">{t("paid")}</Label>
-              </div>
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-
-        <FeatureGate phase="full">
-          <AccordionItem value="integrations">
-            <AccordionTrigger>Integrationen</AccordionTrigger>
-            <AccordionContent>
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="slack" />
-                  <Label htmlFor="slack">Slack</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="teams" />
-                  <Label htmlFor="teams">Microsoft Teams</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="salesforce" />
-                  <Label htmlFor="salesforce">Salesforce</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="sap" />
-                  <Label htmlFor="sap">SAP</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="abacus" />
-                  <Label htmlFor="abacus">Abacus</Label>
-                </div>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </FeatureGate>
       </Accordion>
-
-      <Button className="w-full">{t("apply_filters")}</Button>
     </div>
   )
 }
