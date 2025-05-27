@@ -157,6 +157,18 @@ const translations = {
 
     // Filter sidebar
     reset_filters: "Reset Filters",
+    
+    // Sign up form additions
+    first_name: "First Name",
+    last_name: "Last Name",
+    looking_for_agents: "I'm looking for AI agents",
+    passwords_do_not_match: "Passwords do not match",
+    password_too_short: "Password must be at least 6 characters",
+    signup_error: "Error creating account. Please try again.",
+    creating_account: "Creating account...",
+    signin_error: "Invalid email or password. Please try again.",
+    signing_in: "Signing in...",
+    sign_in_with_google: "Continue with Google",
     filter_supported_languages: "Supported Languages",
     filter_by_tasks: "Filter Tasks",
     apply_filters: "Apply Filters",

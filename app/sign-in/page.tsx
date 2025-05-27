@@ -3,27 +3,54 @@
 import type React from "react"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { useLanguage } from "@/contexts/language-context"
+import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Github, Twitter } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Globe } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 
 export default function SignInPage() {
   const { t } = useLanguage()
+  const router = useRouter()
+  const { signIn, signInWithGoogle } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [rememberMe, setRememberMe] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle sign in logic here
-    console.log({ email, password, rememberMe })
+    setError("")
+    setLoading(true)
+    
+    try {
+      await signIn(email, password)
+      
+      // Redirect to dashboard or agents page based on user profile
+      // The auth context will handle this
+      router.push("/agents")
+    } catch (error: any) {
+      setError(error.message || t("signin_error"))
+    } finally {
+      setLoading(false)
+    }
+  }
+  
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithGoogle("user") // Default to user type for social logins
+    } catch (error: any) {
+      setError(error.message || t("signin_error"))
+    }
   }
 
   return (
@@ -51,6 +78,12 @@ export default function SignInPage() {
         <CardContent>
           <form onSubmit={handleSubmit}>
             <div className="grid gap-4">
+              {error && (
+                <Alert variant="destructive">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+              
               <div className="grid gap-2">
                 <Label htmlFor="email">{t("email")}</Label>
                 <Input
@@ -60,6 +93,7 @@ export default function SignInPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  disabled={loading}
                 />
               </div>
               <div className="grid gap-2">
@@ -75,6 +109,7 @@ export default function SignInPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  disabled={loading}
                 />
               </div>
               <div className="flex items-center space-x-2">
@@ -83,8 +118,8 @@ export default function SignInPage() {
                   {t("remember_me")}
                 </Label>
               </div>
-              <Button type="submit" className="w-full">
-                {t("sign_in")}
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? t("signing_in") : t("sign_in")}
               </Button>
             </div>
           </form>
@@ -98,14 +133,15 @@ export default function SignInPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Button variant="outline" className="w-full">
-              <Github className="mr-2 h-4 w-4" />
-              Github
-            </Button>
-            <Button variant="outline" className="w-full">
-              <Twitter className="mr-2 h-4 w-4" />
-              Twitter
+          <div className="grid gap-4">
+            <Button 
+              variant="outline" 
+              className="w-full" 
+              onClick={handleGoogleSignIn}
+              disabled={loading}
+            >
+              <Globe className="mr-2 h-4 w-4" />
+              {t("sign_in_with_google")}
             </Button>
           </div>
         </CardContent>

@@ -3,26 +3,35 @@
 import type React from "react"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { useLanguage } from "@/contexts/language-context"
+import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import Link from "next/link"
 import Image from "next/image"
 
 export default function SignUpPage() {
   const { t } = useLanguage()
+  const router = useRouter()
+  const { signUp } = useAuth()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
+  
   const [formData, setFormData] = useState({
-    fullName: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     confirmPassword: "",
     companyName: "",
     companyWebsite: "",
-    accountType: "individual",
+    accountType: "user", // "user" or "provider"
     agreeTerms: false,
   })
 
@@ -39,10 +48,44 @@ export default function SignUpPage() {
     setFormData((prev) => ({ ...prev, agreeTerms: checked }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle sign up logic here
-    console.log(formData)
+    setError("")
+    
+    // Validate passwords match
+    if (formData.password !== formData.confirmPassword) {
+      setError(t("passwords_do_not_match"))
+      return
+    }
+    
+    // Validate password length
+    if (formData.password.length < 6) {
+      setError(t("password_too_short"))
+      return
+    }
+    
+    setLoading(true)
+    
+    try {
+      await signUp(formData.email, formData.password, {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        user_type: formData.accountType === "provider" ? "provider" : "user",
+        company_name: formData.accountType === "provider" ? formData.companyName : null,
+        preferred_language: "en", // You could detect this from browser
+      })
+      
+      // Redirect based on account type
+      if (formData.accountType === "provider") {
+        router.push("/dashboard")
+      } else {
+        router.push("/agents")
+      }
+    } catch (error: any) {
+      setError(error.message || t("signup_error"))
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -70,9 +113,35 @@ export default function SignUpPage() {
         <CardContent>
           <form onSubmit={handleSubmit}>
             <div className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="fullName">{t("full_name")}</Label>
-                <Input id="fullName" name="fullName" value={formData.fullName} onChange={handleChange} required />
+              {error && (
+                <Alert variant="destructive">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="firstName">{t("first_name")}</Label>
+                  <Input 
+                    id="firstName" 
+                    name="firstName" 
+                    value={formData.firstName} 
+                    onChange={handleChange} 
+                    required 
+                    disabled={loading}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="lastName">{t("last_name")}</Label>
+                  <Input 
+                    id="lastName" 
+                    name="lastName" 
+                    value={formData.lastName} 
+                    onChange={handleChange} 
+                    required 
+                    disabled={loading}
+                  />
+                </div>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="email">{t("email")}</Label>
@@ -84,6 +153,7 @@ export default function SignUpPage() {
                   value={formData.email}
                   onChange={handleChange}
                   required
+                  disabled={loading}
                 />
               </div>
               <div className="grid gap-2">
@@ -95,6 +165,7 @@ export default function SignUpPage() {
                   value={formData.password}
                   onChange={handleChange}
                   required
+                  disabled={loading}
                 />
               </div>
               <div className="grid gap-2">
@@ -106,6 +177,7 @@ export default function SignUpPage() {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   required
+                  disabled={loading}
                 />
               </div>
 
@@ -115,17 +187,12 @@ export default function SignUpPage() {
                   value={formData.accountType}
                   onValueChange={handleRadioChange}
                   className="flex flex-col space-y-1"
+                  disabled={loading}
                 >
                   <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="individual" id="individual" />
-                    <Label htmlFor="individual" className="font-normal">
-                      {t("individual")}
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="business" id="business" />
-                    <Label htmlFor="business" className="font-normal">
-                      {t("business")}
+                    <RadioGroupItem value="user" id="user" />
+                    <Label htmlFor="user" className="font-normal">
+                      {t("looking_for_agents")}
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -137,7 +204,7 @@ export default function SignUpPage() {
                 </RadioGroup>
               </div>
 
-              {(formData.accountType === "business" || formData.accountType === "provider") && (
+              {formData.accountType === "provider" && (
                 <>
                   <div className="grid gap-2">
                     <Label htmlFor="companyName">{t("company_name")}</Label>
@@ -146,7 +213,8 @@ export default function SignUpPage() {
                       name="companyName"
                       value={formData.companyName}
                       onChange={handleChange}
-                      required={formData.accountType !== "individual"}
+                      required
+                      disabled={loading}
                     />
                   </div>
                   <div className="grid gap-2">
@@ -158,7 +226,8 @@ export default function SignUpPage() {
                       placeholder="https://example.com"
                       value={formData.companyWebsite}
                       onChange={handleChange}
-                      required={formData.accountType !== "individual"}
+                      required
+                      disabled={loading}
                     />
                   </div>
                 </>
@@ -171,8 +240,8 @@ export default function SignUpPage() {
                 </Label>
               </div>
 
-              <Button type="submit" className="w-full" disabled={!formData.agreeTerms}>
-                {t("create_account_button")}
+              <Button type="submit" className="w-full" disabled={!formData.agreeTerms || loading}>
+                {loading ? t("creating_account") : t("create_account_button")}
               </Button>
             </div>
           </form>

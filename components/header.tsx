@@ -134,7 +134,9 @@ export function Header() {
                 <LanguageSwitcher />
               </FeatureGate>
               <FeatureGate feature="authentication">
-                <Button variant="outline">{t("sign_in")}</Button>
+                <Link href="/sign-in">
+                  <Button variant="outline">{t("sign_in")}</Button>
+                </Link>
               </FeatureGate>
               <Link href="/register-agent">
                 <Button>{t("register_agent")}</Button>
@@ -188,9 +190,11 @@ export function Header() {
             </FeatureGate>
             <div className="pt-4 flex flex-col gap-3">
               <FeatureGate feature="authentication">
-                <Button variant="outline" className="w-full">
-                  {t("sign_in")}
-                </Button>
+                <Link href="/sign-in" className="w-full">
+                  <Button variant="outline" className="w-full">
+                    {t("sign_in")}
+                  </Button>
+                </Link>
               </FeatureGate>
               <Link href="/register-agent" className="w-full">
                 <Button className="w-full">{t("register_agent")}</Button>

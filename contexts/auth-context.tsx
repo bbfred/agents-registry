@@ -82,15 +82,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
     if (error) throw error
 
-    // Create user profile
+    // Create user profile with only the fields that exist in the database
     if (data.user) {
       const { error: profileError } = await supabase
         .from('user_profiles')
         .insert({
           id: data.user.id,
-          ...userData,
+          user_type: userData.user_type || 'user',
+          first_name: userData.first_name,
+          last_name: userData.last_name,
+          company_name: userData.company_name,
+          email: email,
+          preferred_language: userData.preferred_language || 'en',
         })
-      if (profileError) throw profileError
+      if (profileError) {
+        console.error('Profile creation error:', profileError)
+        throw profileError
+      }
     }
   }
 
