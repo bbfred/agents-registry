@@ -11,16 +11,38 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
-import { Menu, X, LayoutDashboard, Bot } from "lucide-react"
+import { Menu, X, LayoutDashboard, Bot, User, LogOut, Settings } from "lucide-react"
 import { useState } from "react"
 import { useLanguage } from "@/contexts/language-context"
+import { useAuth } from "@/contexts/auth-context"
 import { LanguageSwitcher } from "@/components/language-switcher"
 import { FeatureGate, FullFeaturesOnly } from "@/components/feature-gate"
+import { useRouter } from "next/navigation"
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { t } = useLanguage()
+  const { user, profile, signOut } = useAuth()
+  const router = useRouter()
+  
+  const handleSignOut = async () => {
+    await signOut()
+    router.push("/")
+  }
+  
+  const userInitials = profile?.first_name && profile?.last_name
+    ? `${profile.first_name[0]}${profile.last_name[0]}`.toUpperCase()
+    : user?.email?.[0].toUpperCase() || 'U'
 
   return (
     <header className="border-b bg-white">
@@ -134,9 +156,60 @@ export function Header() {
                 <LanguageSwitcher />
               </FeatureGate>
               <FeatureGate feature="authentication">
-                <Link href="/sign-in">
-                  <Button variant="outline">{t("sign_in")}</Button>
-                </Link>
+                {user ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={profile?.avatar_url} alt={profile?.first_name || ''} />
+                          <AvatarFallback>{userInitials}</AvatarFallback>
+                        </Avatar>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56" align="end" forceMount>
+                      <DropdownMenuLabel className="font-normal">
+                        <div className="flex flex-col space-y-1">
+                          <p className="text-sm font-medium leading-none">
+                            {profile?.first_name} {profile?.last_name}
+                          </p>
+                          <p className="text-xs leading-none text-muted-foreground">
+                            {user.email}
+                          </p>
+                        </div>
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <FeatureGate feature="dashboard">
+                        <DropdownMenuItem asChild>
+                          <Link href="/dashboard" className="cursor-pointer">
+                            <LayoutDashboard className="mr-2 h-4 w-4" />
+                            <span>{t("dashboard")}</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      </FeatureGate>
+                      <DropdownMenuItem asChild>
+                        <Link href="/account" className="cursor-pointer">
+                          <User className="mr-2 h-4 w-4" />
+                          <span>Account</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/settings" className="cursor-pointer">
+                          <Settings className="mr-2 h-4 w-4" />
+                          <span>Settings</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+                        <LogOut className="mr-2 h-4 w-4" />
+                        <span>Sign out</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <Link href="/sign-in">
+                    <Button variant="outline">{t("sign_in")}</Button>
+                  </Link>
+                )}
               </FeatureGate>
               <Link href="/register-agent">
                 <Button>{t("register_agent")}</Button>
@@ -190,11 +263,50 @@ export function Header() {
             </FeatureGate>
             <div className="pt-4 flex flex-col gap-3">
               <FeatureGate feature="authentication">
-                <Link href="/sign-in" className="w-full">
-                  <Button variant="outline" className="w-full">
-                    {t("sign_in")}
-                  </Button>
-                </Link>
+                {user ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 px-3 py-2 bg-gray-50 rounded-md">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={profile?.avatar_url} alt={profile?.first_name || ''} />
+                        <AvatarFallback>{userInitials}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col">
+                        <p className="text-sm font-medium">
+                          {profile?.first_name} {profile?.last_name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {user.email}
+                        </p>
+                      </div>
+                    </div>
+                    <Link href="/account" className="w-full">
+                      <Button variant="outline" className="w-full justify-start">
+                        <User className="mr-2 h-4 w-4" />
+                        Account
+                      </Button>
+                    </Link>
+                    <Link href="/settings" className="w-full">
+                      <Button variant="outline" className="w-full justify-start">
+                        <Settings className="mr-2 h-4 w-4" />
+                        Settings
+                      </Button>
+                    </Link>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start"
+                      onClick={handleSignOut}
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Sign out
+                    </Button>
+                  </div>
+                ) : (
+                  <Link href="/sign-in" className="w-full">
+                    <Button variant="outline" className="w-full">
+                      {t("sign_in")}
+                    </Button>
+                  </Link>
+                )}
               </FeatureGate>
               <Link href="/register-agent" className="w-full">
                 <Button className="w-full">{t("register_agent")}</Button>

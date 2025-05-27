@@ -6,10 +6,18 @@ import { User } from '@supabase/supabase-js'
 
 interface UserProfile {
   id: string
-  user_type: 'user' | 'provider'
+  user_type: 'user' | 'provider' | 'admin'
+  first_name?: string
+  last_name?: string
   full_name?: string
   company_name?: string
+  email?: string
+  avatar_url?: string
   preferred_language?: string
+  verification_level?: 'none' | 'email_verified' | 'identity_verified' | 'business_verified'
+  verification_date?: string
+  created_at?: string
+  updated_at?: string
 }
 
 interface AuthContextType {
@@ -73,7 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signUp = async (email: string, password: string, userData: any) => {
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -81,25 +89,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       },
     })
     if (error) throw error
-
-    // Create user profile with only the fields that exist in the database
-    if (data.user) {
-      const { error: profileError } = await supabase
-        .from('user_profiles')
-        .insert({
-          id: data.user.id,
-          user_type: userData.user_type || 'user',
-          first_name: userData.first_name,
-          last_name: userData.last_name,
-          company_name: userData.company_name,
-          email: email,
-          preferred_language: userData.preferred_language || 'en',
-        })
-      if (profileError) {
-        console.error('Profile creation error:', profileError)
-        throw profileError
-      }
-    }
+    
+    // Profile will be created automatically by the database trigger
+    // No manual profile creation needed
   }
 
   const signOut = async () => {
