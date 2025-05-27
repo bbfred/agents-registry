@@ -1,8 +1,19 @@
 // Run this script with: npx tsx scripts/test-supabase.ts
 import { createClient } from '@supabase/supabase-js'
+import * as dotenv from 'dotenv'
+import * as path from 'path'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+// Load environment variables from .env.local
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local') })
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('❌ Missing environment variables!')
+  console.error('Make sure you have set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local')
+  process.exit(1)
+}
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
