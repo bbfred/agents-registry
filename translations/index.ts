@@ -190,13 +190,9 @@ const translations = {
     archive_project: "Archive Project",
 
     // Categories
-    customer_service: "Customer Service",
-    translation: "Translation",
     household_management: "Household Management",
-    technical_support: "Technical Support",
     marketing: "Marketing",
     legal_consultation: "Legal Consultation",
-    data_analysis: "Data Analysis",
     multilingual: "Multilingual",
     support: "Support",
     document_analysis: "Document Analysis",
