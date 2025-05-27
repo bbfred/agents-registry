@@ -17,13 +17,13 @@ import Link from "next/link"
 import { FeatureGate } from "@/components/feature-gate"
 
 interface AgentPageProps {
-  params: Promise<{
+  params: {
     id: string
-  }>
+  }
 }
 
-export default async function AgentPage({ params }: AgentPageProps) {
-  const { id } = await params
+export default function AgentPage({ params }: AgentPageProps) {
+  const id = params.id
   return <AgentPageClient id={id} />
 }
 

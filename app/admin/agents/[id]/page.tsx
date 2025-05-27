@@ -45,13 +45,13 @@ const agentSubmissions = [
 ]
 
 interface AgentDetailPageProps {
-  params: Promise<{
+  params: {
     id: string
-  }>
+  }
 }
 
-export default async function AgentDetailPage({ params }: AgentDetailPageProps) {
-  const { id } = await params
+export default function AgentDetailPage({ params }: AgentDetailPageProps) {
+  const id = params.id
   return <AgentDetailClient id={id} />
 }
 
@@ -86,9 +86,9 @@ function AgentDetailClient({ id }: { id: string }) {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "pending":
-        return <Badge variant="warning">{t("pending_approval")}</Badge>
+        return <Badge variant="secondary">{t("pending_approval")}</Badge>
       case "approved":
-        return <Badge variant="success">{t("approved")}</Badge>
+        return <Badge variant="default">{t("approved")}</Badge>
       case "rejected":
         return <Badge variant="destructive">{t("rejected")}</Badge>
       default:

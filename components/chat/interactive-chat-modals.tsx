@@ -14,12 +14,46 @@ import { Progress } from "@/components/ui/progress"
 import { Upload, FileText, CheckCircle, AlertCircle, User } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 
+interface FormField {
+  name: string
+  label: string
+  type: "text" | "email" | "textarea"
+  placeholder?: string
+  required?: boolean
+}
+
+interface Option {
+  value: string
+  label: string
+  description?: string
+}
+
+interface StepInfo {
+  id: string
+  label: string
+  description?: string
+}
+
 export interface ChatModal {
   id: string
   type: "form" | "multiple-choice" | "file-upload" | "step-process" | "confirmation" | "rating"
   title: string
   description?: string
-  data: Record<string, unknown>
+  data: {
+    fields?: FormField[]
+    options?: Option[]
+    multiple?: boolean
+    accept?: string
+    maxFiles?: number
+    steps?: StepInfo[]
+    currentStep?: number
+    message?: string
+    confirmText?: string
+    cancelText?: string
+    maxRating?: number
+    ratingLabels?: string[]
+    [key: string]: unknown
+  }
   onSubmit: (data: Record<string, unknown>) => void
   onCancel: () => void
 }
@@ -59,7 +93,7 @@ function FormModal({ modal }: { modal: ChatModal }) {
     const newErrors: Record<string, string> = {}
 
     // Validate required fields
-    modal.data.fields?.forEach((field: Record<string, unknown>) => {
+    modal.data.fields?.forEach((field) => {
       if (field.required && !formData[field.name]) {
         newErrors[field.name] = t("field_required")
       }
@@ -90,7 +124,7 @@ function FormModal({ modal }: { modal: ChatModal }) {
         {modal.description && <CardDescription>{modal.description}</CardDescription>}
       </CardHeader>
       <CardContent className="space-y-4">
-        {modal.data.fields?.map((field: Record<string, unknown>) => (
+        {modal.data.fields?.map((field) => (
           <div key={field.name} className="space-y-2">
             <Label htmlFor={field.name}>
               {field.label}
@@ -100,7 +134,7 @@ function FormModal({ modal }: { modal: ChatModal }) {
               <Input
                 id={field.name}
                 placeholder={field.placeholder}
-                value={formData[field.name] || ""}
+                value={(formData[field.name] as string) || ""}
                 onChange={(e) => updateField(field.name, e.target.value)}
                 className={errors[field.name] ? "border-red-500" : ""}
               />
@@ -110,7 +144,7 @@ function FormModal({ modal }: { modal: ChatModal }) {
                 id={field.name}
                 type="email"
                 placeholder={field.placeholder}
-                value={formData[field.name] || ""}
+                value={(formData[field.name] as string) || ""}
                 onChange={(e) => updateField(field.name, e.target.value)}
                 className={errors[field.name] ? "border-red-500" : ""}
               />
@@ -119,7 +153,7 @@ function FormModal({ modal }: { modal: ChatModal }) {
               <Textarea
                 id={field.name}
                 placeholder={field.placeholder}
-                value={formData[field.name] || ""}
+                value={(formData[field.name] as string) || ""}
                 onChange={(e) => updateField(field.name, e.target.value)}
                 className={errors[field.name] ? "border-red-500" : ""}
               />
@@ -169,7 +203,7 @@ function MultipleChoiceModal({ modal }: { modal: ChatModal }) {
       <CardContent className="space-y-4">
         {modal.data.multiple ? (
           <div className="space-y-3">
-            {modal.data.options?.map((option: { value: string; label: string; description?: string }) => (
+            {modal.data.options?.map((option) => (
               <div key={option.value} className="flex items-center space-x-2">
                 <Checkbox
                   id={option.value}
@@ -187,7 +221,7 @@ function MultipleChoiceModal({ modal }: { modal: ChatModal }) {
           </div>
         ) : (
           <RadioGroup value={selectedValue} onValueChange={setSelectedValue}>
-            {modal.data.options?.map((option: { value: string; label: string; description?: string }) => (
+            {modal.data.options?.map((option) => (
               <div key={option.value} className="flex items-center space-x-2">
                 <RadioGroupItem value={option.value} id={option.value} />
                 <Label htmlFor={option.value} className="flex-1 cursor-pointer">
@@ -362,27 +396,27 @@ function StepProcessModal({ modal }: { modal: ChatModal }) {
         {currentStepData && (
           <div className="space-y-4">
             <div>
-              <h3 className="font-medium mb-2">{currentStepData.title}</h3>
+              <h3 className="font-medium mb-2">{currentStepData.label}</h3>
               {currentStepData.description && (
                 <p className="text-sm text-gray-600 mb-4">{currentStepData.description}</p>
               )}
             </div>
 
             {/* Render step content based on type */}
-            {currentStepData.type === "form" && (
+            {modal.data.currentStepType === "form" && (
               <StepForm
-                fields={currentStepData.fields}
+                fields={(modal.data.currentStepFields as FormField[]) || []}
                 onSubmit={handleStepSubmit}
-                initialData={stepData[currentStep]}
+                initialData={stepData[currentStep] as Record<string, unknown>}
               />
             )}
 
-            {currentStepData.type === "choice" && (
+            {modal.data.currentStepType === "choice" && (
               <StepChoice
-                options={currentStepData.options}
-                multiple={currentStepData.multiple}
+                options={(modal.data.currentStepOptions as Option[]) || []}
+                multiple={modal.data.currentStepMultiple as boolean}
                 onSubmit={handleStepSubmit}
-                initialData={stepData[currentStep]}
+                initialData={stepData[currentStep] as { selected?: string | string[] }}
               />
             )}
           </div>
@@ -414,7 +448,7 @@ function StepForm({ fields, onSubmit, initialData }: { fields: Array<{ name: str
           <Input
             id={field.name}
             placeholder={field.placeholder}
-            value={formData[field.name] || ""}
+            value={(formData[field.name] as string) || ""}
             onChange={(e) => setFormData((prev) => ({ ...prev, [field.name]: e.target.value }))}
           />
         </div>
@@ -442,12 +476,12 @@ function StepChoice({ options, multiple, onSubmit, initialData }: { options: Arr
             <div key={option.value} className="flex items-center space-x-2">
               <Checkbox
                 id={option.value}
-                checked={selected.includes(option.value)}
+                checked={(selected as string[]).includes(option.value)}
                 onCheckedChange={(checked) => {
                   if (checked) {
-                    setSelected((prev: string[]) => [...prev, option.value])
+                    setSelected((prev) => Array.isArray(prev) ? [...prev, option.value] : [option.value])
                   } else {
-                    setSelected((prev: string[]) => prev.filter((v: string) => v !== option.value))
+                    setSelected((prev) => Array.isArray(prev) ? prev.filter((v) => v !== option.value) : [])
                   }
                 }}
               />
@@ -456,7 +490,7 @@ function StepChoice({ options, multiple, onSubmit, initialData }: { options: Arr
           ))}
         </div>
       ) : (
-        <RadioGroup value={selected} onValueChange={setSelected}>
+        <RadioGroup value={selected as string} onValueChange={setSelected}>
           {options?.map((option) => (
             <div key={option.value} className="flex items-center space-x-2">
               <RadioGroupItem value={option.value} id={option.value} />
@@ -465,7 +499,7 @@ function StepChoice({ options, multiple, onSubmit, initialData }: { options: Arr
           ))}
         </RadioGroup>
       )}
-      <Button onClick={handleSubmit} className="w-full" disabled={multiple ? selected.length === 0 : !selected}>
+      <Button onClick={handleSubmit} className="w-full" disabled={multiple ? (selected as string[]).length === 0 : !selected}>
         {t("continue")}
       </Button>
     </div>
@@ -486,19 +520,26 @@ function ConfirmationModal({ modal }: { modal: ChatModal }) {
         {modal.description && <CardDescription>{modal.description}</CardDescription>}
       </CardHeader>
       <CardContent>
-        {modal.data.summary && (
-          <div className="space-y-2">
-            <h4 className="font-medium">{t("summary")}:</h4>
-            <div className="bg-gray-50 p-3 rounded text-sm">
-              {Object.entries(modal.data.summary).map(([key, value]) => (
-                <div key={key} className="flex justify-between">
-                  <span className="font-medium">{key}:</span>
-                  <span>{String(value)}</span>
-                </div>
-              ))}
+        <div className="space-y-4">
+          {modal.data.message && (
+            <p className="text-gray-600">{String(modal.data.message)}</p>
+          )}
+          {modal.data.summary ? (
+            <div className="space-y-2">
+              <h4 className="font-medium">{t("summary")}:</h4>
+              <div className="bg-gray-50 p-3 rounded text-sm">
+                {typeof modal.data.summary === 'object' && modal.data.summary !== null && 
+                  Object.entries(modal.data.summary as Record<string, unknown>).map(([key, value]) => (
+                    <div key={key} className="flex justify-between">
+                      <span className="font-medium">{key}:</span>
+                      <span>{String(value)}</span>
+                    </div>
+                  ))
+                }
+              </div>
             </div>
-          </div>
-        )}
+          ) : null}
+        </div>
       </CardContent>
       <CardFooter className="flex gap-2">
         <Button variant="outline" onClick={modal.onCancel} className="flex-1">

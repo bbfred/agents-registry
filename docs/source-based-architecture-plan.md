@@ -1,5 +1,9 @@
-# Source-Based Architecture Plan
-## Swiss AI Agent Registry - Integration Methods Approach
+# Future Architecture: Source-Based Integration
+## Swiss AI Agent Registry - Advanced Integration Methods
+
+**Status**: 🔮 FUTURE CONCEPT (Not yet implemented)
+
+**Note**: This document describes a potential future architecture for Phase 3+ that would enable advanced agent integration methods. The current MVP uses static data only.
 
 ### Core Concept: Agent Source Types
 

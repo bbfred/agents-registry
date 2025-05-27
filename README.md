@@ -1,36 +1,111 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Swiss AI Agents Registry
+
+A curated platform for discovering, comparing, and integrating AI agents in Switzerland. This project serves as a trusted marketplace where businesses and individuals can find verified AI solutions.
+
+## Tech Stack
+
+- **Framework**: Next.js 15 with App Router
+- **UI Components**: shadcn/ui (Radix UI + Tailwind CSS v4)
+- **Styling**: Tailwind CSS v4 with CSS variables
+- **Language**: TypeScript
+- **Database**: Supabase (planned)
+- **Authentication**: Supabase Auth (planned)
 
 ## Getting Started
 
-First, run the development server:
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd agents-registry
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   # Create .env.local file
+   NEXT_PUBLIC_FEATURE_PHASE=mvp  # Options: mvp, auth, full
+   ```
+
+4. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Open [http://localhost:3001](http://localhost:3001)** with your browser to see the result.
+
+## Available Scripts
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev       # Start development server with Turbopack
+npm run build     # Build for production
+npm run lint      # Run ESLint
+npm run start     # Start production server
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Feature Phases
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+This project uses feature flags to progressively roll out functionality:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **MVP Phase** (`mvp`): Core agent browsing, details, registration, and contact
+- **Auth Phase** (`auth`): MVP + authentication features
+- **Full Phase** (`full`): All features including dashboard, blog, and advanced functionality
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+app/                    # Next.js App Router pages
+├── agents/            # Agent browsing and details
+├── contact/           # Contact forms
+├── register-agent/    # Agent registration
+└── dashboard/         # Project management (feature-flagged)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+components/            # React components
+├── ui/               # shadcn/ui components
+├── agent-card.tsx    # Agent display components
+└── dashboard/        # Dashboard components (feature-flagged)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+lib/                  # Utility functions
+├── features.ts       # Feature flags configuration
+└── utils.ts          # General utilities
 
-## Deploy on Vercel
+translations/         # Internationalization
+└── index.ts          # Translation keys and messages
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Key Features
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Agent Discovery**: Browse and search AI agents by category, language, and verification level
+- **Agent Details**: Comprehensive information about each agent's capabilities and reviews
+- **Agent Registration**: Simple form for providers to register their AI agents
+- **Responsive Design**: Mobile-friendly interface with consistent card layouts
+- **Feature Flags**: Progressive feature rollout system
+- **Type Safety**: Full TypeScript implementation
+
+## Project Status
+
+**Phase 1 MVP is COMPLETE** ✅ - Ready for production deployment!
+
+See [PROJECT_STATUS.md](./docs/PROJECT_STATUS.md) for current status and deployment guide.
+
+## Documentation
+
+- **Project Status & Deployment**: [PROJECT_STATUS.md](./docs/PROJECT_STATUS.md)
+- **Development Guide**: [CLAUDE.md](./CLAUDE.md)
+- **Backend Plans**: [docs/backend-implementation-plan.md](./docs/backend-implementation-plan.md)
+- **Migration Strategy**: [docs/deployment-migration-strategy.md](./docs/deployment-migration-strategy.md)
+
+## Contributing
+
+1. Create a feature branch from `main`
+2. Make your changes
+3. Test locally with `npm run dev`
+4. Run linting with `npm run lint`
+5. Submit a pull request
+
+## License
+
+This project is proprietary software. All rights reserved.
