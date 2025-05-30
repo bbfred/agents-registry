@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     // Build query - simplified to avoid JOIN issues
     let query = supabase
       .from('agents')
-      .select('*')
+      .select('*', { count: 'exact' })
       .eq('status', 'approved')
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1)
@@ -82,12 +82,17 @@ export async function GET(request: NextRequest) {
       updatedAt: agent.updated_at
     })) || []
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       agents: transformedAgents,
       total: count,
       limit,
       offset
     })
+
+    // Add cache headers - cache for 5 minutes
+    response.headers.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=60')
+    
+    return response
 
   } catch (error) {
     console.error('API error:', error)

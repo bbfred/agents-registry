@@ -27,7 +27,7 @@ interface UserPreferences {
 }
 
 export default function SettingsPage() {
-  const { user, profile } = useAuth()
+  const { user, profile, loading } = useAuth()
   const { language, setLanguage } = useLanguage()
   const router = useRouter()
   const [saving, setSaving] = useState(false)
@@ -46,10 +46,10 @@ export default function SettingsPage() {
   })
 
   useEffect(() => {
-    if (!user) {
+    if (!loading && !user) {
       router.push('/sign-in')
     }
-  }, [user, router])
+  }, [user, loading, router])
 
   const handleSave = async () => {
     setSaving(true)
@@ -76,6 +76,16 @@ export default function SettingsPage() {
     } finally {
       setSaving(false)
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="container max-w-4xl mx-auto px-4 py-8">
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+        </div>
+      </div>
+    )
   }
 
   if (!user) return null

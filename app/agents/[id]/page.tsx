@@ -1,5 +1,6 @@
 "use client"
 
+import { use } from "react"
 import { Badge } from "@/components/ui/badge"
 import { VerificationBadge } from "@/components/verification-badge"
 import { AgentSummary } from "@/components/agent-summary"
@@ -15,15 +16,24 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { FeatureGate } from "@/components/feature-gate"
 import type { Agent } from "@/types/agent"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 
 interface AgentPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default function AgentPage({ params }: AgentPageProps) {
-  const id = params.id
+  const resolvedParams = use(params)
+  const id = resolvedParams.id
   return <AgentPageClient id={id} />
 }
 
@@ -95,6 +105,23 @@ function AgentPageClient({ id }: { id: string }) {
 
   return (
     <main className="container mx-auto max-w-6xl py-8 px-4">
+      {/* Breadcrumb */}
+      <Breadcrumb className="mb-6">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/">Home</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/agents">Agents</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{agent.name}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-2">
           <div className="flex items-start gap-6 mb-8">

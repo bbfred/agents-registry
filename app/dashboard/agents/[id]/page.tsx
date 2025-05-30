@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { use, useState, useEffect } from "react"
 import { useLanguage } from "@/contexts/language-context"
 import { AgentChatInterface } from "@/components/agent-chat-interface"
 import { AgentStatusIndicator } from "@/components/dashboard/agent-status-indicator"
@@ -15,17 +15,23 @@ import { mockAgentInstances, mockConversations } from "@/data/dashboard"
 import type { AgentStatus } from "@/types/dashboard"
 
 interface AgentDetailPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default function AgentDetailPage({ params }: AgentDetailPageProps) {
+  const resolvedParams = use(params)
+  const id = resolvedParams.id
+  return <AgentDetailClient id={id} />
+}
+
+function AgentDetailClient({ id }: { id: string }) {
   const { t } = useLanguage()
   const [isLoading, setIsLoading] = useState(true)
-  const [instance, setInstance] = useState(mockAgentInstances.find((a) => a.id === params.id))
+  const [instance, setInstance] = useState(mockAgentInstances.find((a) => a.id === id))
   const [agentConversations] = useState(
-    mockConversations.filter((c) => c.agentInstanceId === params.id),
+    mockConversations.filter((c) => c.agentInstanceId === id),
   )
   const [isChangingStatus, setIsChangingStatus] = useState(false)
   const [isFavorite, setIsFavorite] = useState(instance?.favorite || false)

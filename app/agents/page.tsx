@@ -3,10 +3,28 @@
 import { useState, useEffect } from "react"
 import { SearchBar } from "@/components/search-bar"
 import { AgentCard } from "@/components/agent-card"
+import { AgentCardSkeleton } from "@/components/ui/agent-card-skeleton"
 import { FilterSidebar } from "@/components/filter-sidebar"
 import { Button } from "@/components/ui/button"
-import { Filter, Loader2 } from "lucide-react"
+import { Filter } from "lucide-react"
 import type { Agent } from "@/types/agent"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 
 interface AgentsResponse {
   agents: Agent[]
@@ -14,6 +32,8 @@ interface AgentsResponse {
   limit: number
   offset: number
 }
+
+const ITEMS_PER_PAGE = 6
 
 export default function AgentsPage() {
   const [agents, setAgents] = useState<Agent[]>([])
@@ -24,6 +44,7 @@ export default function AgentsPage() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([])
   const [sortBy, setSortBy] = useState("newest")
+  const [currentPage, setCurrentPage] = useState(1)
 
   const fetchAgents = async () => {
     try {
@@ -33,8 +54,10 @@ export default function AgentsPage() {
       if (searchQuery) params.append('search', searchQuery)
       if (selectedCategories.length > 0) params.append('categories', selectedCategories.join(','))
       if (selectedLanguages.length > 0) params.append('languages', selectedLanguages.join(','))
-      params.append('limit', '50')
-      params.append('offset', '0')
+      
+      const offset = (currentPage - 1) * ITEMS_PER_PAGE
+      params.append('limit', ITEMS_PER_PAGE.toString())
+      params.append('offset', offset.toString())
 
       const response = await fetch(`/api/agents?${params}`)
       
@@ -56,10 +79,15 @@ export default function AgentsPage() {
     }
   }
 
-  // Initial load
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchQuery, selectedCategories, selectedLanguages])
+
+  // Fetch agents when page or filters change
   useEffect(() => {
     fetchAgents()
-  }, [searchQuery, selectedCategories, selectedLanguages])
+  }, [currentPage, searchQuery, selectedCategories, selectedLanguages])
 
   const handleSearch = (query: string) => {
     setSearchQuery(query)
@@ -83,6 +111,110 @@ export default function AgentsPage() {
     }
   })
 
+  const totalPages = Math.ceil(total / ITEMS_PER_PAGE)
+
+  const generatePaginationItems = () => {
+    const items = []
+    const maxVisible = 5
+    
+    if (totalPages <= maxVisible) {
+      // Show all pages if total is small
+      for (let i = 1; i <= totalPages; i++) {
+        items.push(
+          <PaginationItem key={i}>
+            <PaginationLink
+              href="#"
+              onClick={(e) => {
+                e.preventDefault()
+                setCurrentPage(i)
+              }}
+              isActive={currentPage === i}
+              className="cursor-pointer"
+            >
+              {i}
+            </PaginationLink>
+          </PaginationItem>
+        )
+      }
+    } else {
+      // Show first page
+      items.push(
+        <PaginationItem key={1}>
+          <PaginationLink
+            href="#"
+            onClick={(e) => {
+              e.preventDefault()
+              setCurrentPage(1)
+            }}
+            isActive={currentPage === 1}
+            className="cursor-pointer"
+          >
+            1
+          </PaginationLink>
+        </PaginationItem>
+      )
+
+      // Show ellipsis if needed
+      if (currentPage > 3) {
+        items.push(
+          <PaginationItem key="ellipsis-start">
+            <PaginationEllipsis />
+          </PaginationItem>
+        )
+      }
+
+      // Show current page and neighbors
+      const start = Math.max(2, currentPage - 1)
+      const end = Math.min(totalPages - 1, currentPage + 1)
+      
+      for (let i = start; i <= end; i++) {
+        items.push(
+          <PaginationItem key={i}>
+            <PaginationLink
+              href="#"
+              onClick={(e) => {
+                e.preventDefault()
+                setCurrentPage(i)
+              }}
+              isActive={currentPage === i}
+              className="cursor-pointer"
+            >
+              {i}
+            </PaginationLink>
+          </PaginationItem>
+        )
+      }
+
+      // Show ellipsis if needed
+      if (currentPage < totalPages - 2) {
+        items.push(
+          <PaginationItem key="ellipsis-end">
+            <PaginationEllipsis />
+          </PaginationItem>
+        )
+      }
+
+      // Show last page
+      items.push(
+        <PaginationItem key={totalPages}>
+          <PaginationLink
+            href="#"
+            onClick={(e) => {
+              e.preventDefault()
+              setCurrentPage(totalPages)
+            }}
+            isActive={currentPage === totalPages}
+            className="cursor-pointer"
+          >
+            {totalPages}
+          </PaginationLink>
+        </PaginationItem>
+      )
+    }
+    
+    return items
+  }
+
   if (error) {
     return (
       <main className="container mx-auto max-w-6xl py-8 px-4">
@@ -97,6 +229,19 @@ export default function AgentsPage() {
 
   return (
     <main className="container mx-auto max-w-6xl py-8 px-4">
+      {/* Breadcrumb */}
+      <Breadcrumb className="mb-6">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/">Home</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Agents</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       <h1 className="text-3xl font-bold mb-6">AI Agents Directory</h1>
 
       <div className="mb-8">
@@ -141,9 +286,10 @@ export default function AgentsPage() {
           </div>
 
           {loading ? (
-            <div className="flex justify-center items-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin" />
-              <span className="ml-2">Loading agents...</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[...Array(ITEMS_PER_PAGE)].map((_, i) => (
+                <AgentCardSkeleton key={i} />
+              ))}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -167,6 +313,39 @@ export default function AgentsPage() {
                   </Button>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Pagination */}
+          {!loading && sortedAgents.length > 0 && total > ITEMS_PER_PAGE && (
+            <div className="mt-8">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious 
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        setCurrentPage(prev => Math.max(1, prev - 1))
+                      }}
+                      className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                  
+                  {generatePaginationItems()}
+                  
+                  <PaginationItem>
+                    <PaginationNext 
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        setCurrentPage(prev => Math.min(totalPages, prev + 1))
+                      }}
+                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
             </div>
           )}
         </div>

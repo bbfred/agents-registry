@@ -1,5 +1,6 @@
 "use client"
 
+import { use } from "react"
 import { useLanguage } from "@/contexts/language-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -45,13 +46,14 @@ const agentSubmissions = [
 ]
 
 interface AgentDetailPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default function AgentDetailPage({ params }: AgentDetailPageProps) {
-  const id = params.id
+  const resolvedParams = use(params)
+  const id = resolvedParams.id
   return <AgentDetailClient id={id} />
 }
 

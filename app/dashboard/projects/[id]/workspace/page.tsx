@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { use, useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -103,7 +103,19 @@ const sampleFiles = [
   },
 ]
 
-export default function ProjectWorkspacePage({ }: { params: { id: string } }) {
+interface ProjectWorkspacePageProps {
+  params: Promise<{
+    id: string
+  }>
+}
+
+export default function ProjectWorkspacePage({ params }: ProjectWorkspacePageProps) {
+  const resolvedParams = use(params)
+  const id = resolvedParams.id
+  return <ProjectWorkspaceClient id={id} />
+}
+
+function ProjectWorkspaceClient({ id }: { id: string }) {
   const { t } = useLanguage()
   const [activeTab, setActiveTab] = useState("chat")
 

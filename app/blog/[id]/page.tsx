@@ -1,5 +1,6 @@
 "use client"
 
+import { use } from "react"
 import { CardContent } from "@/components/ui/card"
 
 import { Card } from "@/components/ui/card"
@@ -74,14 +75,20 @@ const blogPosts = [
 ]
 
 interface BlogPostPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default function BlogPostPage({ params }: BlogPostPageProps) {
+  const resolvedParams = use(params)
+  const id = resolvedParams.id
+  return <BlogPostClient id={id} />
+}
+
+function BlogPostClient({ id }: { id: string }) {
   const { t } = useLanguage()
-  const post = blogPosts.find((p) => p.id === params.id)
+  const post = blogPosts.find((p) => p.id === id)
 
   if (!post) {
     return (

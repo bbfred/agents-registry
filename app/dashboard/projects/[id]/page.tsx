@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { use, useState, useEffect } from "react"
 import { useLanguage } from "@/contexts/language-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -27,18 +27,24 @@ import { ProjectTaskList } from "@/components/dashboard/project-task-list"
 import { ProjectFileList } from "@/components/dashboard/project-file-list"
 
 interface ProjectDetailPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
+  const resolvedParams = use(params)
+  const id = resolvedParams.id
+  return <ProjectDetailClient id={id} />
+}
+
+function ProjectDetailClient({ id }: { id: string }) {
   const { t } = useLanguage()
   const [isLoading, setIsLoading] = useState(true)
-  const [project, setProject] = useState(mockProjects.find((p) => p.id === params.id))
-  const [projectChats, setProjectChats] = useState(mockChats.filter((c) => c.projectId === params.id))
-  const [projectTasks, setProjectTasks] = useState(mockTasks.filter((t) => t.projectId === params.id))
-  const [projectFiles, setProjectFiles] = useState(mockFiles.filter((f) => f.projectId === params.id))
+  const [project, setProject] = useState(mockProjects.find((p) => p.id === id))
+  const [projectChats, setProjectChats] = useState(mockChats.filter((c) => c.projectId === id))
+  const [projectTasks, setProjectTasks] = useState(mockTasks.filter((t) => t.projectId === id))
+  const [projectFiles, setProjectFiles] = useState(mockFiles.filter((f) => f.projectId === id))
   const [isFavorite, setIsFavorite] = useState(project?.favorite || false)
 
   useEffect(() => {

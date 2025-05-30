@@ -85,7 +85,12 @@ export async function GET(
       updatedAt: agent.updated_at
     }
 
-    return NextResponse.json(transformedAgent)
+    const response = NextResponse.json(transformedAgent)
+    
+    // Add cache headers - cache for 5 minutes
+    response.headers.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=60')
+    
+    return response
 
   } catch (error) {
     console.error('API error:', error)
